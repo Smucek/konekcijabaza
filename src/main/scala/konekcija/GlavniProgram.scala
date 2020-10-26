@@ -28,7 +28,7 @@ object GlavniProgram {
         ex.printStackTrace()
       }
     }
-    val vehicleRequest = sql"select brand, model, plate, registration_date, registration_end_date from vehicles".as[Vehicle]
+    val vehicleRequest = sql"select brand, model, plate, registration_date, registration_end_date from vehicles".as[(String, String, String, String, String)]
 
     connection.run(vehicleRequest).onComplete {
       case Success(r) => println(s"Result: ${r}")

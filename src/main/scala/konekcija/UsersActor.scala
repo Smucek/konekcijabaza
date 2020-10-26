@@ -3,7 +3,7 @@ package konekcija
 import akka.actor.{ActorSystem, Props}
 import akka.util.Timeout
 import konekcija.UsersActorOperations.ListUsers
-
+import akka.pattern.ask
 import scala.concurrent.duration._
 
 object UsersActor {
@@ -15,6 +15,6 @@ object UsersActor {
 
       val operations = as.actorOf(Props(new UsersActorOperations))
 
-      operations ! ListUsers
+      operations ? ListUsers
     }
 }
