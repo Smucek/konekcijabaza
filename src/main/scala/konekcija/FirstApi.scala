@@ -31,7 +31,7 @@ object FirstApi extends App with Directives with JsonSupport {
     }
   }
 
-  val createVehicle = post {
+  val addVehicle = post {
     path("vehicles") {
       entity(as[Vehicle]) { vehicle =>
         complete {
@@ -42,7 +42,7 @@ object FirstApi extends App with Directives with JsonSupport {
   }
 
 
-  val routes = getUser ~ getVehicles ~ createVehicle
+  val routes = getUser ~ getVehicles ~ addVehicle
 
   val httpCtx = Http()
   httpCtx.bindAndHandle(routes,"localhost", 8090)

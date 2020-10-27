@@ -1,21 +1,23 @@
 package konekcija
 
 import java.time.LocalDateTime
+
 import slick.jdbc.PostgresProfile.api._
+
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 trait DatabaseMethods {
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  def listVehicles()
+  def listVehicles()(connection: Database): Future[Seq[Vehicle]] = {
     val vehicleRequest = sql"select * from vehicles".as[Vehicle]
 
-    connection.run(vehicleRequest).onComplete {
-      case Success(vehicles) =>
-      case Failure => Future.failed(new Throwable("Can't find any vehicles"))
+    connection.run(vehicleRequest).flatMap { vehicle =>
+      Future {
+        vehicle
       }
-
+    }
+  }
 
   def editVehicle(id: Long, brand: String, model: String, plate: String,
                     category: String, registration_date: LocalDateTime, registration_end_date: LocalDateTime)(connection: Database): Future[Vehicle] = {

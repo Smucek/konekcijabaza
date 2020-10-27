@@ -1,9 +1,9 @@
 package konekcija
 
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 import akka.actor.Actor
+import akka.pattern.pipe
 import com.typesafe.config.ConfigFactory
 import konekcija.DatabaseActor.{EditVehicle, ListVehicles}
 import slick.jdbc.PostgresProfile.api._
@@ -13,6 +13,9 @@ object DatabaseActor {
   case class DeleteVehicle(id: Long)
   case class EditVehicle(id: Long, brand: String, model: String, plate: String, category: String, registration_date: LocalDateTime,
                          registration_end_date: LocalDateTime)
+  case class AddVehicle(id: Long, brand: String, model: String, plate: String, category: String, registration_date: LocalDateTime,
+                         registration_end_date: LocalDateTime)
+  case class SearchVehicle(id: Long, brand: String, model: String, plate: String)
 }
 
 class DatabaseActor extends Actor with DatabaseMethods {
@@ -32,7 +35,7 @@ class DatabaseActor extends Actor with DatabaseMethods {
   def receive = {
 
     case ListVehicles() => {
-      listVehicles()(connection).pipeTo(sender
+      listVehicles()(connection).pipeTo(sender)
     }
 
     case EditVehicle(id, brand, model, plate, category, registration_date, registration_end_date) => {
