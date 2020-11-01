@@ -2,16 +2,21 @@ package konekcija
 
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives
+import akka.pattern.ask
 import akka.util.Timeout
+import konekcija.DatabaseActor.DeleteVehicle
 
 import scala.concurrent.duration._
+import scala.util.parsing.json.JSONObject
+import scala.util.{Failure, Success}
 
 object FirstApi extends App with Directives with JsonSupport {
   import scala.concurrent.ExecutionContext.Implicits.global
 
   implicit val as = ActorSystem()
-  val dbActor = as.actorOf(Props(new UsersActorOperations))
+  val dbActor = as.actorOf(Props(new DatabaseActor))
   implicit val timeout = Timeout(3.seconds)
 
 
@@ -26,10 +31,30 @@ object FirstApi extends App with Directives with JsonSupport {
   val getVehicles = get {
     path("vehicles" / Segment) {id =>
       complete {
-        "Searched vehicle " + id
+        "Searched vehicles " + id
       }
     }
   }
+
+  val searchVehicle = get {
+    path("vehicles") {
+      parameters("plate".as[String].?) { plate =>
+
+        val res = Map("plate" -> plate)
+
+        complete {
+          HttpResponse(
+            StatusCodes.OK,
+            entity = HttpEntity(
+              ContentTypes.`application/json`,
+              (new JSONObject(res)).toString().getBytes()
+            )
+          )
+        }
+      }
+    }
+  }
+
 
   val addVehicle = post {
     path("vehicles") {
@@ -41,8 +66,24 @@ object FirstApi extends App with Directives with JsonSupport {
     }
   }
 
+  val deleteVehicle = delete {
+    path("vehicle" / LongNumber) { id =>
+      val vehicleToDelete = (dbActor ? DeleteVehicle(id)).map(_.asInstanceOf[Vehicle])
 
-  val routes = getUser ~ getVehicles ~ addVehicle
+      onComplete(vehicleToDelete) {
+        case Success(vehicle) => complete {vehicle}
+        case Failure(ex) => complete {
+          HttpResponse(StatusCodes.BadRequest, entity = HttpEntity(ContentTypes.`text/plain(UTF-8)`, ex.getMessage))
+        }
+      }
+    }
+  }
+
+
+
+
+
+  val routes = getUser ~ getVehicles ~ addVehicle ~ searchVehicle ~ deleteVehicle
 
   val httpCtx = Http()
   httpCtx.bindAndHandle(routes,"localhost", 8090)

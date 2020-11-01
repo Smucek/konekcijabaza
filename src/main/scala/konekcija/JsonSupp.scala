@@ -11,7 +11,9 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
     def read(value: JsValue): Vehicle = {
       value.asJsObject.getFields("brand", "model", "plate", "category") match {
         case Seq(JsString(brand), JsString(model), JsString(plate), JsString(category)) => {
-          Vehicle(None, brand, model, plate, category, registration_date = LocalDateTime.now(), registration_end_date = LocalDateTime.now.plusYears(1))
+          Vehicle(None, None, brand, model, plate, category,
+            registration_date = LocalDateTime.now(), registration_end_date = LocalDateTime.now.plusYears(1),
+            creation_date = LocalDateTime.now(), update_date = LocalDateTime.now())
         }
         case _ => throw new DeserializationException("Wrong inputs")
       }
@@ -19,14 +21,19 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 
     def write(v: Vehicle): JsObject = {
       val id: Long = v.id.getOrElse(0L)
+      val id_company: Long = v.id.getOrElse(0L)
+
       JsObject(
         "id" -> JsNumber(id),
+        "id_company" -> JsNumber(id_company),
         "brand" -> JsString(v.brand),
         "model" -> JsString(v.model),
         "plate" -> JsString(v.plate),
         "category" -> JsString(v.category),
         "registration_date" -> JsString(v.registration_date.format(Vehicle.dateFormater)),
-        "registration_end_date" -> JsString(v.registration_end_date.format(Vehicle.dateFormater))
+        "registration_end_date" -> JsString(v.registration_end_date.format(Vehicle.dateFormater)),
+        "creation_date" -> JsString(v.creation_date.format(Vehicle.dateFormater)),
+        "update_date" -> JsString(v.update_date.format(Vehicle.dateFormater))
       )
     }
   }
