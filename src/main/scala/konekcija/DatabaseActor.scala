@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import akka.actor.Actor
 import akka.pattern.pipe
 import com.typesafe.config.ConfigFactory
-import konekcija.DatabaseActor.{DeleteVehicle, EditVehicle, ListVehicles, SearchVehicle}
+import konekcija.DatabaseActor.{AddVehicle, DeleteVehicle, EditVehicle, ListVehicles, SearchVehicle}
 import slick.jdbc.PostgresProfile.api._
 
 object DatabaseActor {
@@ -13,9 +13,9 @@ object DatabaseActor {
   case class DeleteVehicle(id: Long)
   case class EditVehicle(id: Long, id_company: Long, brand: String, model: String, plate: String, category: String, registration_date: LocalDateTime,
                          registration_end_date: LocalDateTime, creation_date: LocalDateTime, update_date: LocalDateTime)
-  case class AddVehicle(id: Long, brand: String, model: String, plate: String, category: String, registration_date: LocalDateTime,
-                         registration_end_date: LocalDateTime)
-  case class SearchVehicle(id: Long, brand: String, model: String, plate: String)
+  case class AddVehicle(id: Long, id_company: Long, brand: String, model: String, plate: String, category: String, registration_date: LocalDateTime,
+                         registration_end_date: LocalDateTime, creation_date: LocalDateTime, update_date: LocalDateTime)
+  case class SearchVehicle(id: Long)
 }
 
 class  DatabaseActor extends Actor with DatabaseMethods {
@@ -40,12 +40,14 @@ class  DatabaseActor extends Actor with DatabaseMethods {
     case EditVehicle(id, id_company, brand, model, plate, category, registration_date, registration_end_date, creation_date, update_date) => {
       editVehicle(id, id_company, brand, model, plate, category, registration_date, registration_end_date, creation_date, update_date)(connection).pipeTo(sender)
     }
-    case SearchVehicle(id, brand, model, plate) => {
-      searchVehicle(id, brand, model, plate)(connection).pipeTo(sender)
+    case SearchVehicle(id: Long) => {
+      searchVehicle(id: Long)(connection).pipeTo(sender)
     }
     case DeleteVehicle (id) => {
       deleteVehicle(id)(connection).pipeTo(sender)
     }
+    case AddVehicle(id, id_company, brand, model, plate, category, registration_date, registration_end_date, creation_date, update_date) =>
+      addVehicle(id, id_company, brand, model, plate, category, registration_date, registration_end_date, creation_date, update_date)(connection).pipeTo(sender)
 
   }
 }

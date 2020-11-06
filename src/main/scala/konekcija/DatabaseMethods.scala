@@ -42,12 +42,18 @@ trait DatabaseMethods {
     }
   }
 
-  def searchVehicle(id: Long, brand: String, model: String, plate: String)(connection: Database): Future[Vehicle] = {
-    val vehicleSearch = sql"select brand, model, plate from vehicles".as[Vehicle]
+  def searchVehicle(id: Long)(connection: Database): Future[Seq[Vehicle]] = {
+    val vehicleSearch = sql"select * from vehicles".as[Vehicle]
+
 
     connection.run(vehicleSearch).flatMap { result =>
       result.headOption match {
-        case Some(vehicle) => Future(vehicle)
+        case Some(vehicle) => Future.successful(vehicle)
+        case None => Future.failed(new Throwable("Vehicle not added"))
+
+      }
+      Future {
+        result
       }
     }
   }

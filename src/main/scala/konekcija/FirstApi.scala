@@ -6,7 +6,7 @@ import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusC
 import akka.http.scaladsl.server.Directives
 import akka.pattern.ask
 import akka.util.Timeout
-import konekcija.DatabaseActor.DeleteVehicle
+import konekcija.DatabaseActor.{DeleteVehicle, ListVehicles}
 
 import scala.concurrent.duration._
 import scala.util.parsing.json.JSONObject
@@ -21,7 +21,7 @@ object FirstApi extends App with Directives with JsonSupport {
 
 
   val getUser = get {
-    path("users" / Segment) {id =>
+    path("user" / Segment) {id =>
       complete {
         "Searched user " + id
       }
@@ -29,18 +29,28 @@ object FirstApi extends App with Directives with JsonSupport {
   }
 
   val getVehicles = get {
-    path("vehicles" / Segment) {id =>
-      complete {
-        "Searched vehicles " + id
+//    path("vehicles" / Segment) {id =>
+//      complete {
+//        "Searched vehicles " + id
+//      }
+//    }
+    path("vehicles") {
+      val vehiclesShow = (dbActor ? ListVehicles()).map(_.asInstanceOf[Seq[Vehicle]])
+      onComplete(vehiclesShow) { vehicles =>
+//        respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")) {
+          complete {
+            vehicles
+          
+        }
       }
     }
   }
 
   val searchVehicle = get {
-    path("vehicles") {
-      parameters("plate".as[String].?) { plate =>
+    path("vehicle") {
+      parameters("brand".as[String].?, "model".as[String].?, "plate".as[String].?) { (brand, model, plate) =>
 
-        val res = Map("plate" -> plate)
+        val res = Map("brand" -> brand, "model" -> model, "plate" -> plate)
 
         complete {
           HttpResponse(
@@ -57,7 +67,7 @@ object FirstApi extends App with Directives with JsonSupport {
 
 
   val addVehicle = post {
-    path("vehicles") {
+    path("vehicleAdd") {
       entity(as[Vehicle]) { vehicle =>
         complete {
           vehicle
@@ -67,7 +77,7 @@ object FirstApi extends App with Directives with JsonSupport {
   }
 
   val deleteVehicle = delete {
-    path("vehicle" / LongNumber) { id =>
+    path("vehicleDel" / LongNumber) { id =>
       val vehicleToDelete = (dbActor ? DeleteVehicle(id)).map(_.asInstanceOf[Vehicle])
 
       onComplete(vehicleToDelete) {
@@ -79,11 +89,14 @@ object FirstApi extends App with Directives with JsonSupport {
     }
   }
 
+  val forma = get {
+    path("forma") {
+      getFromFile("VehiclePage.html")
+    }
+  }
 
 
-
-
-  val routes = getUser ~ getVehicles ~ addVehicle ~ searchVehicle ~ deleteVehicle
+  val routes = getUser ~ getVehicles ~ addVehicle ~ searchVehicle ~ deleteVehicle ~ forma
 
   val httpCtx = Http()
   httpCtx.bindAndHandle(routes,"localhost", 8090)
