@@ -9,7 +9,7 @@ import konekcija.DatabaseActor.{AddVehicle, DeleteVehicle, EditVehicle, ListVehi
 import slick.jdbc.PostgresProfile.api._
 
 object DatabaseActor {
-  case class ListVehicles()
+  case class ListVehicles(plate: Option[String])
   case class DeleteVehicle(id: Long)
   case class EditVehicle(id: Long, id_company: Long, brand: String, model: String, plate: String, category: String, registration_date: LocalDateTime,
                          registration_end_date: LocalDateTime, creation_date: LocalDateTime, update_date: LocalDateTime)
@@ -34,8 +34,8 @@ class  DatabaseActor extends Actor with DatabaseMethods {
 
   def receive = {
 
-    case ListVehicles() => {
-      listVehicles()(connection).pipeTo(sender)
+    case ListVehicles(plate) => {
+      listVehicles(plate)(connection).pipeTo(sender)
     }
     case EditVehicle(id, id_company, brand, model, plate, category, registration_date, registration_end_date, creation_date, update_date) => {
       editVehicle(id, id_company, brand, model, plate, category, registration_date, registration_end_date, creation_date, update_date)(connection).pipeTo(sender)

@@ -35,12 +35,15 @@ object FirstApi extends App with Directives with JsonSupport {
 //      }
 //    }
     path("vehicles") {
-      val vehiclesShow = (dbActor ? ListVehicles()).map(_.asInstanceOf[Seq[Vehicle]])
+
+      parameters("plate".?) { plate =>
+
+      val vehiclesShow = (dbActor ? ListVehicles(plate)).map(_.asInstanceOf[Seq[Vehicle]])
       onComplete(vehiclesShow) { vehicles =>
 //        respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")) {
           complete {
             vehicles
-          
+          }
         }
       }
     }

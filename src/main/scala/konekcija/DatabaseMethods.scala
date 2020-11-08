@@ -9,14 +9,15 @@ import scala.concurrent.Future
 trait DatabaseMethods {
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  def listVehicles()(connection: Database): Future[Seq[Vehicle]] = {
-    val vehicleRequest = sql"select * from vehicles".as[Vehicle]
+  def listVehicles(plate: Option[String])(connection: Database): Future[Seq[Vehicle]] = {
+//    val vehicleRequest = sql"select * from vehicles".as[Vehicle]
 
-    connection.run(vehicleRequest).flatMap { vehicle =>
-      Future {
-        vehicle
-      }
+    val vehicleRequest = plate match {
+      case Some (vehiclePlate: String) => sql"select * from vehicles where plate = '#${vehiclePlate}';".as[Vehicle]
+      case None => sql"select * from vehicles".as[Vehicle]
     }
+
+    connection.run(vehicleRequest)
   }
 
   def editVehicle(id: Long, id_company: Long, brand: String, model: String, plate: String, category: String,

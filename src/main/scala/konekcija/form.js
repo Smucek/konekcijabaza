@@ -15,7 +15,34 @@ $(document).ready(function(){
         return html;
     };
 
-var url = 'http://localhost:8090/vehicles';
+    $(document).on("click", ".showallbtn", function(){
+
+    var url = 'http://localhost:8090/vehicles';
+    $.ajax({
+    url: url,
+           type: "GET",
+           processData: false,
+           contentType: "application/json",
+           data: {},
+           headers: {},
+           success: function(res) {
+               console.log(res);
+    
+               res.forEach(function(vehicle){
+                   $("tbody").append(createTableRow(vehicle));
+               }    
+               );
+           },
+           error: function(err) {
+               console.log(`Error on executing request: ${err.message}`);
+           }
+    });
+    });
+$(document).on("click", ".searchbtn", function(){
+    var plate = document.getElementById("search").value;
+    //alert(plate)
+
+    var url = `http://localhost:8090/vehicles?plate=${plate}`;
 $.ajax({
 url: url,
        type: "GET",
@@ -26,6 +53,7 @@ url: url,
        success: function(res) {
            console.log(res);
 
+           $("tbody").html("")
            res.forEach(function(vehicle){
                $("tbody").append(createTableRow(vehicle));
            }    
@@ -35,5 +63,7 @@ url: url,
            console.log(`Error on executing request: ${err.message}`);
        }
 });
-
 });
+});
+
+
