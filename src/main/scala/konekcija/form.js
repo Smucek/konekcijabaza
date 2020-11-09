@@ -39,10 +39,10 @@ $(document).ready(function(){
     });
     });
 $(document).on("click", ".searchbtn", function(){
-    var plate = document.getElementById("search").value;
-    //alert(plate)
+    var searchTerm = document.getElementById("search").value;
+    alert(searchTerm)
 
-    var url = `http://localhost:8090/vehicles?plate=${plate}`;
+    var url = `http://localhost:8090/vehicle?search-term=${searchTerm}`;
 $.ajax({
 url: url,
        type: "GET",

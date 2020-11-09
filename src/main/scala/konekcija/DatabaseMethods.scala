@@ -43,20 +43,13 @@ trait DatabaseMethods {
     }
   }
 
-  def searchVehicle(id: Long)(connection: Database): Future[Seq[Vehicle]] = {
-    val vehicleSearch = sql"select * from vehicles".as[Vehicle]
+  def searchVehicle(searchTerm: Option[String])(connection: Database): Future[Seq[Vehicle]] = {
+//    val vehicleSearch = sql"select * from vehicles".as[Vehicle]
 
-
-    connection.run(vehicleSearch).flatMap { result =>
-      result.headOption match {
-        case Some(vehicle) => Future.successful(vehicle)
-        case None => Future.failed(new Throwable("Vehicle not added"))
-
-      }
-      Future {
-        result
-      }
+    val vehicleSearch = searchTerm match {
+      case Some(term: String) if term.toLowerCase.contains(searchTerm.toString.toLowerCase) => sql"select * from vehicles where brand = '#${term}';".as[Vehicle]
     }
+    connection.run(vehicleSearch)
   }
 
   def deleteVehicle (id: Long)(connection: Database): Future[Vehicle] = {

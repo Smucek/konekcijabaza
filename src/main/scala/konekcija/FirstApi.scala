@@ -6,10 +6,9 @@ import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusC
 import akka.http.scaladsl.server.Directives
 import akka.pattern.ask
 import akka.util.Timeout
-import konekcija.DatabaseActor.{DeleteVehicle, ListVehicles}
+import konekcija.DatabaseActor.{DeleteVehicle, ListVehicles, SearchVehicle}
 
 import scala.concurrent.duration._
-import scala.util.parsing.json.JSONObject
 import scala.util.{Failure, Success}
 
 object FirstApi extends App with Directives with JsonSupport {
@@ -51,22 +50,31 @@ object FirstApi extends App with Directives with JsonSupport {
 
   val searchVehicle = get {
     path("vehicle") {
-      parameters("brand".as[String].?, "model".as[String].?, "plate".as[String].?) { (brand, model, plate) =>
+      parameters("search-term".?) { searchTerm =>
 
-        val res = Map("brand" -> brand, "model" -> model, "plate" -> plate)
-
-        complete {
-          HttpResponse(
-            StatusCodes.OK,
-            entity = HttpEntity(
-              ContentTypes.`application/json`,
-              (new JSONObject(res)).toString().getBytes()
-            )
-          )
+        val vehiclesShow = (dbActor ? SearchVehicle(searchTerm)).map(_.asInstanceOf[Seq[Vehicle]])
+        onComplete(vehiclesShow) { vehicles =>
+          //        respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")) {
+          complete {
+            vehicles
+          }
         }
       }
     }
   }
+
+//  complete {
+//          HttpResponse(
+//            StatusCodes.OK,
+//            entity = HttpEntity(
+//              ContentTypes.`application/json`,
+//              (new JSONObject(res)).toString().getBytes()
+//            )
+//          )
+//        }
+//      }
+//    }
+//  }
 
 
   val addVehicle = post {

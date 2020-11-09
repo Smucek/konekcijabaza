@@ -15,7 +15,7 @@ object DatabaseActor {
                          registration_end_date: LocalDateTime, creation_date: LocalDateTime, update_date: LocalDateTime)
   case class AddVehicle(id: Long, id_company: Long, brand: String, model: String, plate: String, category: String, registration_date: LocalDateTime,
                          registration_end_date: LocalDateTime, creation_date: LocalDateTime, update_date: LocalDateTime)
-  case class SearchVehicle(id: Long)
+  case class SearchVehicle(searchTerm: Option[String])
 }
 
 class  DatabaseActor extends Actor with DatabaseMethods {
@@ -40,8 +40,8 @@ class  DatabaseActor extends Actor with DatabaseMethods {
     case EditVehicle(id, id_company, brand, model, plate, category, registration_date, registration_end_date, creation_date, update_date) => {
       editVehicle(id, id_company, brand, model, plate, category, registration_date, registration_end_date, creation_date, update_date)(connection).pipeTo(sender)
     }
-    case SearchVehicle(id: Long) => {
-      searchVehicle(id: Long)(connection).pipeTo(sender)
+    case SearchVehicle(searchTerm) => {
+      searchVehicle(searchTerm)(connection).pipeTo(sender)
     }
     case DeleteVehicle (id) => {
       deleteVehicle(id)(connection).pipeTo(sender)
