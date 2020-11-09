@@ -50,7 +50,7 @@ object FirstApi extends App with Directives with JsonSupport {
 
   val searchVehicle = get {
     path("vehicle") {
-      parameters("search-term".?) { searchTerm =>
+      parameters("searchTerm".?) { searchTerm =>
 
         val vehiclesShow = (dbActor ? SearchVehicle(searchTerm)).map(_.asInstanceOf[Seq[Vehicle]])
         onComplete(vehiclesShow) { vehicles =>

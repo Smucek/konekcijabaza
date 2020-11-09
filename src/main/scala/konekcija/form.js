@@ -42,7 +42,7 @@ $(document).on("click", ".searchbtn", function(){
     var searchTerm = document.getElementById("search").value;
     alert(searchTerm)
 
-    var url = `http://localhost:8090/vehicle?search-term=${searchTerm}`;
+    var url = `http://localhost:8090/vehicle?searchTerm=${searchTerm}`;
 $.ajax({
 url: url,
        type: "GET",
