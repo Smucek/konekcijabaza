@@ -13,7 +13,7 @@ trait DatabaseMethods {
 //    val vehicleRequest = sql"select * from vehicles".as[Vehicle]
 
     val vehicleRequest = plate match {
-      case Some (vehiclePlate: String) => sql"select * from vehicles where plate = '#${vehiclePlate}';".as[Vehicle]
+      case Some (vehiclePlate: String) => sql"select * from vehicles where plate LIKE '%#${vehiclePlate}%';".as[Vehicle]
       case None => sql"select * from vehicles".as[Vehicle]
     }
 
@@ -47,7 +47,10 @@ trait DatabaseMethods {
 //    val vehicleSearch = sql"select * from vehicles".as[Vehicle]
 
     val vehicleSearch = searchTerm match {
-      case Some(term: String) if term.toLowerCase.contains(searchTerm.toString.toLowerCase) => sql"select * from vehicles where brand = '#${term}';".as[Vehicle]
+      case Some(term: String)  => sql"select * from vehicles where lower(brand) LIKE '%#${term.toLowerCase}%' or lower(model) LIKE '%#${term.toLowerCase}%' or lower(plate) LIKE '%#${term.toLowerCase}%';".as[Vehicle]
+//      case Some(termBrand: String)  => sql"select * from vehicles where lower(brand) LIKE '%#${termBrand.toLowerCase}%';".as[Vehicle]
+//      case Some(termModel: String)  => sql"select * from vehicles where lower(model) LIKE '%#${termModel.toLowerCase}%';".as[Vehicle]
+//      case Some(termPlate: String)  => sql"select * from vehicles where lower(plate) LIKE '%#${termPlate.toLowerCase}%';".as[Vehicle]
     }
     connection.run(vehicleSearch)
   }
