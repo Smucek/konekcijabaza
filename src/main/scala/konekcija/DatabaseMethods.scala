@@ -48,9 +48,7 @@ trait DatabaseMethods {
 
     val vehicleSearch = searchTerm match {
       case Some(term: String)  => sql"select * from vehicles where lower(brand) LIKE '%#${term.toLowerCase}%' or lower(model) LIKE '%#${term.toLowerCase}%' or lower(plate) LIKE '%#${term.toLowerCase}%';".as[Vehicle]
-//      case Some(termBrand: String)  => sql"select * from vehicles where lower(brand) LIKE '%#${termBrand.toLowerCase}%';".as[Vehicle]
-//      case Some(termModel: String)  => sql"select * from vehicles where lower(model) LIKE '%#${termModel.toLowerCase}%';".as[Vehicle]
-//      case Some(termPlate: String)  => sql"select * from vehicles where lower(plate) LIKE '%#${termPlate.toLowerCase}%';".as[Vehicle]
+      case None => sql"select * from vehicles".as[Vehicle]
     }
     connection.run(vehicleSearch)
   }
@@ -77,20 +75,18 @@ trait DatabaseMethods {
     val vehicle = Vehicle(Some(id), Some(id_company), brand, model, plate, category,
       registration_date, registration_end_date, creation_date, update_date)
 
-    val update =
-      sql"""
-           insert vehicle
-           set brand = '#${brand}', model = #${model}, plate = #${plate}, category = #${category},
-           registration_date = #${registration_date}, registration_end_date = #${registration_end_date}
-           where id = #${id}
-           returning vehicles.*;
+    val insert =
+      sql"""insert into vehicles
+            (
+            brand := '#${brand}',
+            model := '#${model}',
+            plate := '#${plate}',
+            category := '#${category}',
+            registration_date := '#${registration_date}',
+            registration_end_date := '#${registration_end_date}',
+            )
          """.as[Vehicle]
 
-    connection.run(update).flatMap { result =>
-      result.headOption match {
-        case Some(vehicle) => Future.successful(vehicle)
-        case None => Future.failed(new Throwable("Vehicle not added"))
-      }
-    }
+    connection.run(insert.asInstanceOf)
   }
 }

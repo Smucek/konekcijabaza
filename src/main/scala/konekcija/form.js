@@ -15,9 +15,15 @@ $(document).ready(function(){
         return html;
     };
 
-    $(document).on("click", ".showallbtn", function(){
+    $(document).on("click", ".addbtn", function(){
+        $("add-section").toggle();
+       });
 
+    $(document).on("click", ".showallbtn", function(){
+    
     var url = 'http://localhost:8090/vehicles';
+    $("tbody").html("");
+
     $.ajax({
     url: url,
            type: "GET",
@@ -38,6 +44,7 @@ $(document).ready(function(){
            }
     });
     });
+
 $(document).on("click", ".searchbtn", function(){
     var searchTerm = document.getElementById("search").value;
     //alert(searchTerm)
@@ -53,9 +60,14 @@ url: url,
        success: function(res) {
            console.log(res);
 
-           $("tbody").html("")
+           $("tbody").html("");
            res.forEach(function(vehicle){
+               if (searchTerm === ""){
+                $("tbody").html("");
+               }
+               else {
                $("tbody").append(createTableRow(vehicle));
+               }
            }    
            );
        },
@@ -64,6 +76,37 @@ url: url,
        }
 });
 });
+$(document).on("click", ".addnewbtn", function(){
+    var vehicleData = {
+       "brand" : document.getElementById("brand").value,
+       "model" : document.getElementById("model").value,
+       "plate" : document.getElementById("plate").value,
+       "category" : document.getElementById("category").value,
+       "registration_date" : document.getElementById("registration_date").value,
+       "registration_end_date" : document.getElementById("registration_end_date").value
+    };
+
+    var url = `http://localhost:8090/vehicleAdd`;
+$.ajax({
+url: url,
+       type: "POST",
+       dataType: JSON,
+       contentType: "application/json",
+       data: {vehicleData},
+       headers: {},
+       success: function( data, status ){
+      
+    },
+    error: function(err) {
+        console.log(`Error on executing request: ${err.message}`);
+    }
 });
+});
+});
+
+
+
+
+
 
 

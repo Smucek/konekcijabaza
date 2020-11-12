@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Vehicles</title>
+    <link rel="stylesheet" href="form.css" />
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 
@@ -22,8 +23,50 @@
     <input type="text" id="search" placeholder="License plates..." plate="plate" required>
     <button type="submit" class="searchbtn">Search</button>
     <button type="submit" class="showallbtn">Show all</button>
-
 </div>
+
+<div class="add-button">
+    <button type="submit" class="addbtn">Add new vehicle</button>
+</div>
+
+<form action="/Vehicle" method="post" id="addForm">
+    <div class="container">
+
+        <div class="add-section">
+            <label for="brand"><b>Brand</b></label>
+            <input type="text" placeholder="brand" name="brand" id="brand" required>
+        </div>
+
+        <div class="add-section">
+            <label for="model"><b>Model</b></label>
+            <input type="text" placeholder="model" name="model" id="model" required>
+        </div>
+
+        <div class="add-section">
+            <label for="plate"><b>Plate</b></label>
+            <input type="text" placeholder="licence plates" name="plate" id="plate" required>
+        </div>
+
+        <div class="add-section">
+            <label for="category"><b>Category</b></label>
+            <input type="text" placeholder="category" name="category" id="category" required>
+        </div>
+
+        <div class="add-section">
+            <label for="registration_date"><b>Registration date</b></label>
+            <input type="text" placeholder="start" name="registration_date" id="registration_date" required>
+        </div>
+
+        <div class="add-section">
+            <label for="registration_end_date"><b>Registration end date</b></label>
+            <input type="text" placeholder="end" name="registration_end_date" id="registration_end_date" required>
+        </hr>
+    </p>
+            <button type="submit" class="addnewbtn">Add vehicle</button>
+            <button type="submit" class="cancelbtn">Cancel</button>
+        </div>
+
+    </div>
 
 
 
