@@ -87,6 +87,6 @@ trait DatabaseMethods {
             )
          """.as[Vehicle]
 
-    connection.run(insert.asInstanceOf)
+    connection.run(insert)
   }
 }
