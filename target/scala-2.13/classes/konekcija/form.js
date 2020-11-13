@@ -78,39 +78,29 @@ url: url,
 });
 $(document).on("click", ".addnewbtn", function(){
     var vehicleData = {
-       "brand" : document.getElementById("brand").value,
-       "model" : document.getElementById("model").value,
-       "plate" : document.getElementById("plate").value,
-       "category" : document.getElementById("category").value,
-       "registration_date" : document.getElementById("registration_date").value,
-       "registration_end_date" : document.getElementById("registration_end_date").value
+       "brand" : document.getElementById("brand").getAttribute,
+       "model" : document.getElementById("model").getAttribute,
+       "plate" : document.getElementById("plate").getAttribute,
+       "category" : document.getElementById("category").getAttribute,
+       "registration_date" : document.getElementById("registration_date").getAttribute,
+       "registration_end_date" : document.getElementById("registration_end_date").getAttribute
     };
 
     var url = `http://localhost:8090/vehicleAdd`;
 $.ajax({
-url: url,
+       url: url,
        type: "POST",
-       processData: false,
+       dataType: "JSON",
        contentType: "application/json",
-       data: {vehicleData},
+       data: JSON.stringify(vehicleData),
        headers: {},
-       success: function(res) {
-           console.log(res);
-
-           $("tbody").html("");
-           res.forEach(function(vehicle){
-               if (searchTerm === ""){
-                $("tbody").html("");
-               }
-               else {
-               $("tbody").append(createTableRow(vehicle));
-               }
-           }    
-           );
-       },
-       error: function(err) {
-           console.log(`Error on executing request: ${err.message}`);
-       }
+       processData: false,
+       success: function( data, status ){
+        console.log(data)
+    },
+    error: function(err) {
+        console.log(`Error on executing request: ${err.message}`);
+    }
 });
 });
 });

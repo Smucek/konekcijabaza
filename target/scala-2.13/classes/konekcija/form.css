@@ -23,8 +23,17 @@ div.add-section {
     display: block;
 }
 
-label {
-    font-size: 15px;
+label{
+    display: inline-block;
+    float: left;
+    clear: left;
+    width: 250px;
+    text-align: right;
+    padding-right: 10px;
+}
+input {
+  display: inline-block;
+  float: left;
 }
 
 .addnewbtn {
@@ -33,7 +42,7 @@ label {
     color: white;
     padding: 6px 20px;
     text-align: center;
-    display: inline-block;
+    display: block;
     font-size: 16px;
 }
 
@@ -41,8 +50,8 @@ label {
     background-color: red;  
     border: none;
     color: white;
-    padding: 6px 20px;
+    padding: 6px 37px;
     text-align: center;
-    display: inline-block;
+    display: block;
     font-size: 16px;
 }

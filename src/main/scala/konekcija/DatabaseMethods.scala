@@ -76,17 +76,13 @@ trait DatabaseMethods {
       registration_date, registration_end_date, creation_date, update_date)
 
     val insert =
-      sql"""insert into vehicles
-            (
-            brand := '#${brand}',
-            model := '#${model}',
-            plate := '#${plate}',
-            category := '#${category}',
-            registration_date := '#${registration_date}',
-            registration_end_date := '#${registration_end_date}',
-            )
+      sql"""insert into vehicles (brand, model, plate, category, registration_date, registration_end_date)
+           values ('#${brand}, #${model}, #${plate}, #${category}, #${registration_date}, #${registration_end_date}';)
          """.as[Vehicle]
 
-    connection.run(insert)
+
+    connection.run(insert).map { result =>
+      result.head
+    }
   }
 }
