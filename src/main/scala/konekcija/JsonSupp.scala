@@ -9,10 +9,11 @@ import spray.json.{DefaultJsonProtocol, DeserializationException, JsNumber, JsOb
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit object VehicleJsonFormat extends RootJsonFormat[Vehicle] {
     def read(value: JsValue): Vehicle = {
-      value.asJsObject.getFields("brand", "model", "plate", "category") match {
-        case Seq(JsString(brand), JsString(model), JsString(plate), JsString(category)) => {
+      value.asJsObject.getFields("brand", "model", "plate", "category", "registration_date", "registration_end_date") match {
+        case Seq(JsString(brand), JsString(model), JsString(plate), JsString(category),
+        JsString(registration_date), JsString(registration_end_date)) => {
           Vehicle(None, None, brand, model, plate, category,
-            registration_date = LocalDateTime.now(), registration_end_date = LocalDateTime.now.plusYears(1),
+            registration_date = LocalDateTime.now(), registration_end_date = LocalDateTime.now(),
             creation_date = LocalDateTime.now(), update_date = LocalDateTime.now())
         }
         case _ => throw new DeserializationException("Wrong inputs")
@@ -20,8 +21,8 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
     }
 
     def write(v: Vehicle): JsObject = {
-      val id: Long = v.id.getOrElse(0L)
-      val id_company: Long = v.id.getOrElse(0L)
+      val id: Long = v.id.getOrElse(1L)
+      val id_company: Long = v.id.getOrElse(1L)
 
       JsObject(
         "id" -> JsNumber(id),

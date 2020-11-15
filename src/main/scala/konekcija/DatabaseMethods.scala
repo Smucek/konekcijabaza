@@ -76,8 +76,8 @@ trait DatabaseMethods {
       registration_date, registration_end_date, creation_date, update_date)
 
     val insert =
-      sql"""insert into vehicles (brand, model, plate, category, registration_date, registration_end_date)
-           values ('#${brand}, #${model}, #${plate}, #${category}, #${registration_date}, #${registration_end_date}';)
+      sql"""insert into vehicles (id, id_company, brand, model, plate, category, registration_date, registration_end_date, creation_date, update_date)
+           values ('#${id}, #${id_company}, #${brand}, #${model}, #${plate}, #${category}, #${registration_date}, #${registration_end_date}', #${creation_date}', #${update_date}';)
          """.as[Vehicle]
 
 
