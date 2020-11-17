@@ -13,15 +13,15 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
         case Seq(JsString(brand), JsString(model), JsString(plate), JsString(category),
         JsString(registration_date), JsString(registration_end_date)) => {
           Vehicle(None, None, brand, model, plate, category,
-            registration_date = LocalDateTime.now(), registration_end_date = LocalDateTime.now(),
-            creation_date = LocalDateTime.now(), update_date = LocalDateTime.now())
+            LocalDateTime.parse("dd.MM.YYYY"), LocalDateTime.parse("dd.MM.YYYY"),
+            LocalDateTime.now(), LocalDateTime.now())
         }
         case _ => throw new DeserializationException("Wrong inputs")
       }
     }
 
     def write(v: Vehicle): JsObject = {
-      val id: Long = v.id.getOrElse(1L)
+      val id: Long = v.id.getOrElse(0L)
       val id_company: Long = v.id.getOrElse(1L)
 
       JsObject(

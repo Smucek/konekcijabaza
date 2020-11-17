@@ -19,14 +19,13 @@
 
 
 <div class="search-section">
-    <label for="vehicle-search"><b>Search vehicle</b></label>
-    <input type="text" id="search" placeholder="License plates..." plate="plate" required>
-    <button type="submit" class="searchbtn">Search</button>
+    <input type="text" id="search" placeholder="Search vehicle..." plate="plate" required>
+    <button type="submit" class="searchbtn" ><img src="searchicon.png" width="20" height="20"></button>
     <button type="submit" class="showallbtn">Show all</button>
 </div>
 
 <div class="add-button">
-    <button type="submit" class="addbtn">Add new vehicle</button>
+    <button type="submit" class="addbtn" id="addbtn">Add new vehicle</button>
 </div>
 
 <form action="/Vehicle" method="post" id="addForm">
@@ -54,20 +53,20 @@
 
         <div class="add-section">
             <label for="registration_date"><b>Registration date</b></label>
-            <input type="text" placeholder="start" name="registration_date" id="registration_date" required>
+            <input type="text" placeholder="start" name="registration_date" id="registration_date" >
         </div>
 
         <div class="add-section">
             <label for="registration_end_date"><b>Registration end date</b></label>
-            <input type="text" placeholder="end" name="registration_end_date" id="registration_end_date" required>
+            <input type="text" placeholder="end" name="registration_end_date" id="registration_end_date" >
         </hr>
     </p>
-            <button type="submit" class="addnewbtn">Add vehicle</button>
-            <button type="submit" class="cancelbtn">Cancel</button>
+            <button type="submit" class="addnewbtn" id="addnewbtn">Add vehicle</button>
+            <button type="reset" class="cancelbtn" id="cancelbtn">Cancel</button>
         </div>
 
     </div>
-
+</form>
 
 
 <table class="table table-striped">

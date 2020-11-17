@@ -28,11 +28,6 @@ object FirstApi extends App with Directives with JsonSupport {
   }
 
   val getVehicles = get {
-//    path("vehicles" / Segment) {id =>
-//      complete {
-//        "Searched vehicles " + id
-//      }
-//    }
     path("vehicles") {
 
       parameters("plate".?) { plate =>

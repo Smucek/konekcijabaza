@@ -15,9 +15,17 @@ $(document).ready(function(){
         return html;
     };
 
-    $(document).on("click", ".addbtn", function(){
-        $("add-section").toggle();
-       });
+    $(document).ready(function() {
+        $("#addbtn").click(function() {
+          $("#addForm").show();
+        });
+      });
+
+    $(document).ready(function() {
+        $("#cancelbtn").click(function() {
+          $("#addForm").hide();
+        });
+      });
 
     $(document).on("click", ".showallbtn", function(){
     
@@ -76,14 +84,16 @@ url: url,
        }
 });
 });
-$(document).on("click", ".addnewbtn", function(){
+$(document).on("click", ".addnewbtn", function(event){
+    event.preventDefault();
+
     var vehicleData = {
-       "brand" : document.getElementById("brand").getAttribute,
-       "model" : document.getElementById("model").getAttribute,
-       "plate" : document.getElementById("plate").getAttribute,
-       "category" : document.getElementById("category").getAttribute,
-       "registration_date" : document.getElementById("registration_date").getAttribute,
-       "registration_end_date" : document.getElementById("registration_end_date").getAttribute
+       "brand" : document.getElementById("brand").value,
+       "model" : document.getElementById("model").value,
+       "plate" : document.getElementById("plate").value,
+       "category" : document.getElementById("category").value,
+       "registration_date" : document.getElementById("registration_date").value,
+       "registration_end_date" : document.getElementById("registration_end_date").value
     };
 
     var url = `http://localhost:8090/vehicleAdd`;

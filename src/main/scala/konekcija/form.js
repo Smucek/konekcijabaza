@@ -15,9 +15,17 @@ $(document).ready(function(){
         return html;
     };
 
-    $(document).on("click", ".addbtn", function(){
-        $("add-section").toggle();
-       });
+    $(document).ready(function() {
+        $("#addbtn").click(function() {
+          $("#addForm").show();
+        });
+      });
+
+    $(document).ready(function() {
+        $("#cancelbtn").click(function() {
+          $("#addForm").hide();
+        });
+      });
 
     $(document).on("click", ".showallbtn", function(){
     
@@ -76,7 +84,9 @@ url: url,
        }
 });
 });
-$(document).on("click", ".addnewbtn", function(){
+$(document).on("click", ".addnewbtn", function(event){
+    event.preventDefault();
+
     var vehicleData = {
        "brand" : document.getElementById("brand").value,
        "model" : document.getElementById("model").value,
