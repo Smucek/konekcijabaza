@@ -6,7 +6,7 @@ import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusC
 import akka.http.scaladsl.server.Directives
 import akka.pattern.ask
 import akka.util.Timeout
-import konekcija.DatabaseActor.{DeleteVehicle, ListVehicles, SearchVehicle}
+import konekcija.DatabaseActor.{AddVehicle, DeleteVehicle, ListVehicles, SearchVehicle}
 
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
@@ -75,12 +75,18 @@ object FirstApi extends App with Directives with JsonSupport {
   val addVehicle = post {
     path("vehicleAdd") {
       entity(as[Vehicle]) { vehicle =>
-        complete {
-          vehicle
+        val vehicleToAdd = (dbActor ? AddVehicle(vehicle)).map(_.asInstanceOf[Vehicle])
+        onComplete(vehicleToAdd) {
+          case Success(vehicle) => complete {vehicle}
+          case Failure(ex) => complete {
+            HttpResponse(StatusCodes.BadRequest, entity = HttpEntity(ContentTypes.`text/plain(UTF-8)`, ex.getMessage))
+          }
         }
       }
     }
   }
+
+
 
   val deleteVehicle = delete {
     path("vehicleDel" / LongNumber) { id =>
