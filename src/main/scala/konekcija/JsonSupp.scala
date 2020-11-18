@@ -1,6 +1,6 @@
 package konekcija
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsNumber, JsObject, JsString, JsValue, RootJsonFormat}
@@ -13,7 +13,7 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
         case Seq(JsString(brand), JsString(model), JsString(plate), JsString(category),
         JsString(registration_date), JsString(registration_end_date)) => {
           Vehicle(None, None, brand, model, plate, category,
-            LocalDateTime.parse("dd.MM.YYYY"), LocalDateTime.parse("dd.MM.YYYY"),
+            LocalDate.parse(registration_date, Vehicle.dateFormater).atStartOfDay(), LocalDate.parse(registration_end_date, Vehicle.dateFormater).atStartOfDay(),
             LocalDateTime.now(), LocalDateTime.now())
         }
         case _ => throw new DeserializationException("Wrong inputs")

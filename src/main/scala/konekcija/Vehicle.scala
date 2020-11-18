@@ -2,6 +2,7 @@ package konekcija
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
 import slick.jdbc.GetResult
 
 case class Vehicle(
@@ -19,9 +20,11 @@ case class Vehicle(
 
 object Vehicle {
 
-  val dateFormater = DateTimeFormatter.ofPattern("dd.MM.YYYY")
+     val dateFormater = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+//  val dateFormater = new SimpleDateFormat("dd.MM.YYYY")
 
-implicit val vehicleResult = GetResult[Vehicle]({ r =>
+
+  implicit val vehicleResult = GetResult[Vehicle]({ r =>
     val rs = r.rs
 
     Vehicle(
