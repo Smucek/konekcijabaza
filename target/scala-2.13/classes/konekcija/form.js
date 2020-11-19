@@ -9,6 +9,8 @@ $(document).ready(function(){
             <td>${vehicle.category}</td>
             <td>${vehicle.registration_date}</td>
             <td>${vehicle.registration_end_date}</td>
+            <td><button type="submit" class="delbtn" ><img src="trashicon.png" width="20" height="20"></button></a></td>
+            <td><button type="submit" class="editbtn" ><img src="editicon.png" width="20" height="20"></button></a></td>
         </tr>`
         ;
 

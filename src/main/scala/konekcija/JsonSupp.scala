@@ -5,6 +5,8 @@ import java.time.{LocalDate, LocalDateTime}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsNumber, JsObject, JsString, JsValue, RootJsonFormat}
 
+import scala.collection.immutable.Range
+
 
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit object VehicleJsonFormat extends RootJsonFormat[Vehicle] {

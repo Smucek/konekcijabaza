@@ -77,7 +77,9 @@ object FirstApi extends App with Directives with JsonSupport {
       entity(as[Vehicle]) { vehicle =>
         val vehicleToAdd = (dbActor ? AddVehicle(vehicle)).map(_.asInstanceOf[Vehicle])
         onComplete(vehicleToAdd) {
-          case Success(vehicle) => complete {vehicle}
+          case Success(vehicle) => complete {
+            vehicle
+          }
           case Failure(ex) => complete {
             HttpResponse(StatusCodes.BadRequest, entity = HttpEntity(ContentTypes.`text/plain(UTF-8)`, ex.getMessage))
           }
@@ -85,7 +87,6 @@ object FirstApi extends App with Directives with JsonSupport {
       }
     }
   }
-
 
 
   val deleteVehicle = delete {
