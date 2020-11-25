@@ -44,7 +44,6 @@ trait DatabaseMethods {
   }
 
   def searchVehicle(searchTerm: Option[String])(connection: Database): Future[Seq[Vehicle]] = {
-//    val vehicleSearch = sql"select * from vehicles".as[Vehicle]
 
     val vehicleSearch = searchTerm match {
       case Some(term: String)  => sql"select * from vehicles where lower(brand) LIKE '%#${term.toLowerCase}%' or lower(model) LIKE '%#${term.toLowerCase}%' or lower(plate) LIKE '%#${term.toLowerCase}%';".as[Vehicle]
@@ -74,9 +73,9 @@ trait DatabaseMethods {
     val insert =
       sql"""
            insert into vehicles (id_company, brand, model, plate, category, registration_date, registration_end_date)
-           values ('#${vehicle.id_company.toString}', '#${vehicle.brand}', '#${vehicle.model}', '#${vehicle.plate}', '#${vehicle.category}', '#${vehicle.registration_date.toString}', '#${vehicle.registration_end_date.toString}');
+           values (null, '#${vehicle.brand}', '#${vehicle.model}', '#${vehicle.plate}', '#${vehicle.category}', '#${vehicle.registration_date.toString}', '#${vehicle.registration_end_date.toString}')
+           returning vehicles.*;
          """.as[Vehicle]
-
 
     connection.run(insert).map { result =>
       result.head

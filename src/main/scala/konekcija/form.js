@@ -3,19 +3,53 @@ $(document).ready(function(){
     function createTableRow(vehicle){
         var html = `
         <tr>
-            <td>${vehicle.brand}</td>
-            <td>${vehicle.model}</td>
-            <td>${vehicle.plate}</td>
-            <td>${vehicle.category}</td>
-            <td>${vehicle.registration_date}</td>
-            <td>${vehicle.registration_end_date}</td>
-            <td><button type="submit" class="delbtn" ><img src="trashicon.png" width="20" height="20"></button></a></td>
-            <td><button type="submit" class="editbtn" ><img src="editicon.png" width="20" height="20"></button></a></td>
+            <td contenteditable=false class="brand" id="brand">${vehicle.brand}</td>
+            <td contenteditable=false>${vehicle.model}</td>
+            <td contenteditable=false>${vehicle.plate}</td>
+            <td contenteditable=false>${vehicle.category}</td>
+            <td contenteditable=false>${vehicle.registration_date}</td>
+            <td contenteditable=false>${vehicle.registration_end_date}</td>
+            <td><button type="button" class="delbtn" ><img src="trashicon.png" width="20" height="20"></button></a></td>
+            <td><button type="button" class="editbtn" id="editbtn" ><img src="editicon.png" width="20" height="20"></button></a></td>
+            <td><button type="button" class="confirmbtn" id="confirmbtn"><img src="yesicon.png" width="10" height="10"></button></a></td>
+            <td><button type="button" class="rejectbtn" id="rejectbtn"><img src="noicon.png" width="10" height="10"></button></a></td>
         </tr>`
         ;
 
         return html;
     };
+
+    $(document).on("click", ".editbtn", function() {
+
+        var currentTD = $(this).parents('tr').find('td');
+
+            $(currentTD).find('.confirmbtn').show();
+            $(currentTD).find('.rejectbtn').show();
+
+            if ($(this).prop('contenteditable', false)) {
+            $.each(currentTD, function() {
+             ($(this).prop('contenteditable', true))
+            });
+        };
+
+        
+
+     $('.table tbody').on('click', '.confirmbtn', function() {
+         
+         var editedVehicleData = {
+            "brand" : $(currentTD).parents("tr").find("td:eq(0)").text(),
+            "model" : $(currentTD).parents("tr").find("td:eq(1)").text(),
+            "plate" : $(currentTD).parents("tr").find("td:eq(2)").text(),
+            "category" : $(currentTD).parents("tr").find("td:eq(3)").text(),
+            "registration_date" : $(currentTD).parents("tr").find("td:eq(4)").text(),
+            "registration_end_date" : $(currentTD).parents("tr").find("td:eq(5)").text()
+         };
+            console.log(editedVehicleData);
+        });
+    });
+
+
+      
 
     $(document).ready(function() {
         $("#addbtn").click(function() {
@@ -53,6 +87,7 @@ $(document).ready(function(){
                console.log(`Error on executing request: ${err.message}`);
            }
     });
+    $("#addForm").hide();
     });
 
 $(document).on("click", ".searchbtn", function(){
@@ -114,6 +149,8 @@ $.ajax({
         console.log(`Error on executing request: ${err.message}`);
     }
 });
+$("#addForm").hide();
+$('form :input').val('');
 });
 });
 

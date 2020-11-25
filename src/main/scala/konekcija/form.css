@@ -21,6 +21,26 @@ div.search-section {
 
 .add-button {
     display: inline-block;
+ }
+
+ .editbtn {
+    display: inline;
+    align-items: center;
+}
+
+.delbtn {
+    display: inline;
+    align-items: center;
+}
+
+.confirmbtn {
+    display: none;
+    align-items: center;
+}
+
+.rejectbtn {
+    display: none;
+    align-items: center;
 }
 
 
