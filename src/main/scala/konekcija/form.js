@@ -22,6 +22,9 @@ $(document).ready(function(){
 
     $(document).on("click", ".editbtn", function() {
 
+        $(document).find(".editbtn").hide();
+        $(document).find(".delbtn").hide();
+
         var currentTD = $(this).parents('tr').find('td');
 
             $(currentTD).find('.confirmbtn').show();
@@ -32,8 +35,6 @@ $(document).ready(function(){
              ($(this).prop('contenteditable', true))
             });
         };
-
-        
 
      $('.table tbody').on('click', '.confirmbtn', function() {
          
@@ -65,6 +66,24 @@ $(document).ready(function(){
                     console.log(`Error on executing request: ${err.message}`);
                 }
             });
+            $("tbody").html("");
+        });
+
+        $('.table tbody').on('click', '.rejectbtn', function() {
+
+            $(document).find(".editbtn").show();
+            $(document).find(".delbtn").show();
+    
+            var currentTD = $(this).parents('tr').find('td');
+    
+                $(currentTD).find('.confirmbtn').hide();
+                $(currentTD).find('.rejectbtn').hide();
+    
+                if ($(this).prop('contenteditable', true)) {
+                $.each(currentTD, function() {
+                 ($(this).prop('contenteditable', false))
+                });
+            };
         });
     });
 
