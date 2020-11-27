@@ -21,17 +21,20 @@ trait DatabaseMethods {
   }
 
   def editVehicle(id: Long, id_company: Long, brand: String, model: String, plate: String, category: String,
-                  registration_date: LocalDateTime, registration_end_date: LocalDateTime,
-                  creation_date: LocalDateTime, update_date: LocalDateTime)(connection: Database): Future[Vehicle] = {
+                  registration_date: LocalDateTime, registration_end_date: LocalDateTime)(connection: Database): Future[Vehicle] = {
     val vehicle = Vehicle(Some(id), Some(id_company), brand, model, plate, category,
-      registration_date, registration_end_date, creation_date, update_date)
+      registration_date, registration_end_date, null, null)
 
     val update =
       sql"""
-           update vehicle
-           set brand = '#${brand}, model = #${model}, plate = #${plate}, category = #${category},
-           registration_date = #${registration_date}, registration_end_date = #${registration_end_date}
-           where id = #${id}
+           update vehicles
+           set brand = '#${brand}',
+               model = '#${model}',
+               plate = '#${plate}',
+               category = '#${category}',
+               registration_date = '#${registration_date}',
+               registration_end_date = '#${registration_end_date}'
+           where id = '#${id}'
            returning vehicles.*;
          """.as[Vehicle]
 

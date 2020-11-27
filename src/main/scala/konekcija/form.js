@@ -3,7 +3,8 @@ $(document).ready(function(){
     function createTableRow(vehicle){
         var html = `
         <tr>
-            <td contenteditable=false class="brand" id="brand">${vehicle.brand}</td>
+            <td contenteditable=false style="display:none">${vehicle.id}</td>
+            <td contenteditable=false>${vehicle.brand}</td>
             <td contenteditable=false>${vehicle.model}</td>
             <td contenteditable=false>${vehicle.plate}</td>
             <td contenteditable=false>${vehicle.category}</td>
@@ -37,14 +38,33 @@ $(document).ready(function(){
      $('.table tbody').on('click', '.confirmbtn', function() {
          
          var editedVehicleData = {
-            "brand" : $(currentTD).parents("tr").find("td:eq(0)").text(),
-            "model" : $(currentTD).parents("tr").find("td:eq(1)").text(),
-            "plate" : $(currentTD).parents("tr").find("td:eq(2)").text(),
-            "category" : $(currentTD).parents("tr").find("td:eq(3)").text(),
-            "registration_date" : $(currentTD).parents("tr").find("td:eq(4)").text(),
-            "registration_end_date" : $(currentTD).parents("tr").find("td:eq(5)").text()
+            "id" : $(currentTD).parents('tr').find("td:eq(0)").text(),
+            "brand" : $(currentTD).parents("tr").find("td:eq(1)").text(),
+            "model" : $(currentTD).parents("tr").find("td:eq(2)").text(),
+            "plate" : $(currentTD).parents("tr").find("td:eq(3)").text(),
+            "category" : $(currentTD).parents("tr").find("td:eq(4)").text(),
+            "registration_date" : $(currentTD).parents("tr").find("td:eq(5)").text(),
+            "registration_end_date" : $(currentTD).parents("tr").find("td:eq(6)").text()
          };
             console.log(editedVehicleData);
+
+            var idEdited = Number($(currentTD).parents('tr').find("td:eq(0)").text());
+            var url = `http://localhost:8090/vehicleEdit/${idEdited}`;
+            $.ajax({
+                   url: url,
+                   type: "PUT",
+                   dataType: "JSON",
+                   contentType: "application/json",
+                   data: JSON.stringify(editedVehicleData),
+                   headers: {},
+                   processData: false,
+                   success: function( data, status ){
+                    console.log(data)
+                },
+                error: function(err) {
+                    console.log(`Error on executing request: ${err.message}`);
+                }
+            });
         });
     });
 
