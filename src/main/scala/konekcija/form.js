@@ -12,7 +12,7 @@ $(document).ready(function(){
             <td contenteditable=false>${vehicle.registration_end_date}</td>
             <td><button type="button" class="delbtn" ><img src="trashicon.png" width="20" height="20"></button></a></td>
             <td><button type="button" class="editbtn" id="editbtn" ><img src="editicon.png" width="20" height="20"></button></a></td>
-            <td><button type="button" class="confirmbtn" id="confirmbtn"><img src="yesicon.png" width="10" height="10"></button></a></td>
+            <td><button type="button" class="confirmbtn" id="confirmbtn" data-toggle="popover" data-content="License plates already exists!"><img src="yesicon.png" width="10" height="10"></button></a></td>
             <td><button type="button" class="rejectbtn" id="rejectbtn"><img src="noicon.png" width="10" height="10"></button></a></td>
         </tr>`
         ;
@@ -61,12 +61,19 @@ $(document).ready(function(){
                    processData: false,
                    success: function( data, status ){
                     console.log(data)
+                    $("tbody").html("");
                 },
                 error: function(err) {
                     console.log(`Error on executing request: ${err.message}`);
+                    $(document).ready(function(){
+                            $("[data-toggle='popover']").popover();
+                            
+                            
+                          
+                      });
+
                 }
             });
-            $("tbody").html("");
         });
 
         $('.table tbody').on('click', '.rejectbtn', function() {
@@ -99,6 +106,8 @@ $(document).ready(function(){
     $(document).ready(function() {
         $("#cancelbtn").click(function() {
           $("#addForm").hide();
+          $(".plateduplicate").hide();
+
         });
       });
 
@@ -127,9 +136,11 @@ $(document).ready(function(){
            }
     });
     $("#addForm").hide();
+    $('form :input').val('');
+    $(".plateduplicate").hide();
     });
 
-$(document).on("click", ".searchbtn", function(){
+$(document).on("keyup", "#search", function(){
     var searchTerm = document.getElementById("search").value;
     //alert(searchTerm)
 
@@ -172,7 +183,10 @@ $(document).on("click", ".addnewbtn", function(event){
        "registration_end_date" : document.getElementById("registration_end_date").value
     };
 
-    var url = `http://localhost:8090/vehicleAdd`;
+
+        /*var plateCheck = document.getElementById("plate").value;*/
+
+   var url = `http://localhost:8090/vehicleAdd`;
 $.ajax({
        url: url,
        type: "POST",
@@ -183,13 +197,19 @@ $.ajax({
        processData: false,
        success: function( data, status ){
         console.log(data)
+        $("#addForm").hide();
+        $('form :input').val('');
+        $(".plateduplicate").hide();
+
     },
     error: function(err) {
         console.log(`Error on executing request: ${err.message}`);
+        $(".plateduplicate").show();
+
     }
 });
-$("#addForm").hide();
-$('form :input').val('');
+/*$("#addForm").hide();
+$('form :input').val('');*/
 });
 });
 

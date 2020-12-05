@@ -14,7 +14,7 @@ trait DatabaseMethods {
 
     val vehicleRequest = plate match {
       case Some (vehiclePlate: String) => sql"select * from vehicles where plate LIKE '%#${vehiclePlate}%';".as[Vehicle]
-      case None => sql"select * from vehicles".as[Vehicle]
+      case None => sql"select * from vehicles where is_deleted = false".as[Vehicle]
     }
 
     connection.run(vehicleRequest)
