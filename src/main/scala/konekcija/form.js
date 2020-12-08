@@ -290,7 +290,7 @@ $(document).on("click", ".delbtn", function() {
 
     });
 });
-/*
+
 $(document).ready(function(){
 
     url = 'http://www.7timer.info/bin/api.pl?lon=18.41&lat=43.859&product=astro&output=json'
@@ -307,6 +307,6 @@ $(document).ready(function(){
             console.log(temperature);
         }
     })
-})*/
+})
 
 });
