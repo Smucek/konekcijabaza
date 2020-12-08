@@ -15,7 +15,8 @@ case class Vehicle(
                     registration_date: LocalDateTime,
                     registration_end_date: LocalDateTime,
                     creation_date: LocalDateTime,
-                    update_date: LocalDateTime
+                    update_date: LocalDateTime,
+                    is_deleted: Boolean
                   )
 
 object Vehicle {
@@ -37,6 +38,7 @@ object Vehicle {
       rs.getTimestamp("registration_date").toLocalDateTime,
       rs.getTimestamp("registration_end_date").toLocalDateTime,
       rs.getTimestamp("creation_date").toLocalDateTime,
-      rs.getTimestamp("update_date").toLocalDateTime)
+      rs.getTimestamp("update_date").toLocalDateTime,
+      rs.getBoolean("is_deleted"))
   })
 }

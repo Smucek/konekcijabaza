@@ -6,9 +6,20 @@ div.input-section {
     background-color: red;
 }
 
-form {
+.addForm {
     padding: 15px;
     display: none;
+}
+
+.delForm {
+    padding: 15px;
+    margin-left: 300px;
+    display: none;
+}
+
+.confirmDel {
+    margin-left: 65px;
+    background-color: red;
 }
 
 div.search-section {

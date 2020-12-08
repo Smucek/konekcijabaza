@@ -3,9 +3,7 @@ package konekcija
 import java.time.{LocalDate, LocalDateTime}
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import spray.json.{DefaultJsonProtocol, DeserializationException, JsNumber, JsObject, JsString, JsValue, RootJsonFormat}
-
-import scala.collection.immutable.Range
+import spray.json.{DefaultJsonProtocol, DeserializationException, JsBoolean, JsNumber, JsObject, JsString, JsValue, RootJsonFormat}
 
 
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
@@ -16,7 +14,7 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
         JsString(registration_date), JsString(registration_end_date)) => {
           Vehicle(None, None, brand, model, plate, category,
             LocalDate.parse(registration_date, Vehicle.dateFormater).atStartOfDay(), LocalDate.parse(registration_end_date, Vehicle.dateFormater).atStartOfDay(),
-            LocalDateTime.now(), LocalDateTime.now())
+            LocalDateTime.now(), LocalDateTime.now(), false)
         }
         case _ => throw new DeserializationException("Wrong inputs")
       }
@@ -36,7 +34,8 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
         "registration_date" -> JsString(v.registration_date.format(Vehicle.dateFormater)),
         "registration_end_date" -> JsString(v.registration_end_date.format(Vehicle.dateFormater)),
         "creation_date" -> JsString(v.creation_date.format(Vehicle.dateFormater)),
-        "update_date" -> JsString(v.update_date.format(Vehicle.dateFormater))
+        "update_date" -> JsString(v.update_date.format(Vehicle.dateFormater)),
+        "is_deleted" -> JsBoolean(v.is_deleted)
       )
     }
   }

@@ -13,7 +13,8 @@ trait DatabaseMethods {
 //    val vehicleRequest = sql"select * from vehicles".as[Vehicle]
 
     val vehicleRequest = plate match {
-      case Some (vehiclePlate: String) => sql"select * from vehicles where plate LIKE '%#${vehiclePlate}%';".as[Vehicle]
+      case Some (vehiclePlate: String) =>
+        sql"select * from vehicles where is_deleted = false AND plate LIKE '%#${vehiclePlate}%';".as[Vehicle]
       case None => sql"select * from vehicles where is_deleted = false".as[Vehicle]
     }
 
@@ -23,7 +24,7 @@ trait DatabaseMethods {
   def editVehicle(id: Long, id_company: Long, brand: String, model: String, plate: String, category: String,
                   registration_date: LocalDateTime, registration_end_date: LocalDateTime)(connection: Database): Future[Vehicle] = {
     val vehicle = Vehicle(Some(id), Some(id_company), brand, model, plate, category,
-      registration_date, registration_end_date, null, null)
+      registration_date, registration_end_date, null, null, false)
 
     val update =
       sql"""
@@ -49,24 +50,26 @@ trait DatabaseMethods {
   def searchVehicle(searchTerm: Option[String])(connection: Database): Future[Seq[Vehicle]] = {
 
     val vehicleSearch = searchTerm match {
-      case Some(term: String)  => sql"select * from vehicles where lower(brand) LIKE '%#${term.toLowerCase}%' or lower(model) LIKE '%#${term.toLowerCase}%' or lower(plate) LIKE '%#${term.toLowerCase}%';".as[Vehicle]
+      case Some(term: String)  => sql"select * from vehicles where is_deleted = false AND (lower(brand) LIKE '%#${term.toLowerCase}%' or lower(model) LIKE '%#${term.toLowerCase}%' or lower(plate) LIKE '%#${term.toLowerCase}%');".as[Vehicle]
       case None => sql"select * from vehicles".as[Vehicle]
     }
     connection.run(vehicleSearch)
   }
 
   def deleteVehicle (id: Long)(connection: Database): Future[Vehicle] = {
+
     val delete =
       sql"""
-           delete vehicle
-           where id = #${id}
+           update vehicles
+           set is_deleted = true
+           where id = '#${id}'
            returning vehicles.*;
          """.as[Vehicle]
 
     connection.run(delete).flatMap { result =>
       result.headOption match {
         case Some(vehicle) => Future.successful(vehicle)
-        case None => Future.failed(new Throwable("Can't find vehicle"))
+        case None => Future.failed(new Throwable("Vehicle not deleted!"))
       }
     }
   }

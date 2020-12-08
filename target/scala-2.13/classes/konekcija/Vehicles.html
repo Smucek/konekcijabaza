@@ -28,6 +28,15 @@
     <button type="submit" class="addbtn" id="addbtn">Add new vehicle</button>
 </div>
 
+<form action="/Vehicle" method="put" id="delForm">
+    <div class="container">
+        <div class="del-section">
+            <button type="submit" class="confirmDel" id="ConfirmDel">Confirm</button>
+            <button type="reset" class="cancelDel" id="cancelDel">Cancel</button>
+        </div>
+        </div>
+</form>
+
 <form action="/Vehicle" method="post" id="addForm">
     <div class="container">
 
@@ -70,7 +79,6 @@
     </div>
 </form>
 
-
 <table class="table table-striped" id="vehicleTable">
     <thead class="thead-dark">
     <tr>
@@ -81,7 +89,6 @@
         <th>Category</th>
         <th>Registration date</th>
         <th>Registration end date</th>
-
         <th></th>
     </tr>
     </thead>

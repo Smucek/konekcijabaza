@@ -20,6 +20,8 @@ $(document).ready(function(){
         return html;
     };
 
+    //EDIT VEHICLE
+
     $(document).on("click", ".editbtn", function() {
 
         $(document).find(".editbtn").hide();
@@ -66,12 +68,8 @@ $(document).ready(function(){
                 error: function(err) {
                     console.log(`Error on executing request: ${err.message}`);
                     $(document).ready(function(){
-                            $("[data-toggle='popover']").popover();
-                            
-                            
-                          
-                      });
-
+                            $("[data-toggle='popover']").popover();    
+                    });
                 }
             });
         });
@@ -94,8 +92,7 @@ $(document).ready(function(){
         });
     });
 
-
-      
+    //SHOW FORM FOR ADDING VEHICLES      
 
     $(document).ready(function() {
         $("#addbtn").click(function() {
@@ -110,6 +107,8 @@ $(document).ready(function(){
 
         });
       });
+
+    //SHOW ALL VEHICLES
 
     $(document).on("click", ".showallbtn", function(){
     
@@ -140,9 +139,16 @@ $(document).ready(function(){
     $(".plateduplicate").hide();
     });
 
+//SEARCH VEHICLES
+
+    var timeout = null; //timeout for delaying search input and send request after writing is done
+
 $(document).on("keyup", "#search", function(){
     var searchTerm = document.getElementById("search").value;
     //alert(searchTerm)
+    clearTimeout(timeout)
+    timeout = setTimeout(function() {
+
 
     var url = `http://localhost:8090/vehicle?searchTerm=${searchTerm}`;
 $.ajax({
@@ -170,7 +176,12 @@ url: url,
            console.log(`Error on executing request: ${err.message}`);
        }
 });
+    console.log(searchTerm)
+    }, 500)
 });
+
+//ADD VEHICLE
+
 $(document).on("click", ".addnewbtn", function(event){
     event.preventDefault();
 
@@ -182,9 +193,6 @@ $(document).on("click", ".addnewbtn", function(event){
        "registration_date" : document.getElementById("registration_date").value,
        "registration_end_date" : document.getElementById("registration_end_date").value
     };
-
-
-        /*var plateCheck = document.getElementById("plate").value;*/
 
    var url = `http://localhost:8090/vehicleAdd`;
 $.ajax({
@@ -208,14 +216,62 @@ $.ajax({
 
     }
 });
-/*$("#addForm").hide();
-$('form :input').val('');*/
-});
 });
 
+//DELETE VEHICLE
 
+$(document).on("click", ".delbtn", function() {
 
+    $(document).find(".editbtn").hide();
+    $(document).find(".delbtn").hide();
 
+    var currentTD = $(this).parents('tr').find('td');
 
+     //   $(currentTD).find('.confirmbtn').show();
+      //  $(currentTD).find('.rejectbtn').show();
 
+ $(document).on('click', '.confirmDel', function() {
+    event.preventDefault();
 
+     var delVehicle = {
+        "id" : $(currentTD).parents('tr').find("td:eq(0)").text(),
+     };
+        console.log(delVehicle);
+
+        var idToDelete = Number($(currentTD).parents('tr').find("td:eq(0)").text());
+        var url = `http://localhost:8090/vehicleDel/${idToDelete}`;
+        $.ajax({
+               url: url,
+               type: "DELETE",
+               dataType: "JSON",
+               contentType: "application/json",
+               data: JSON.stringify(idToDelete),
+               headers: {},
+               processData: false,
+               success: function( data, status ){
+                console.log(data)
+                $("tbody").html("");
+            },
+            error: function(err) {
+                console.log(`Error on executing request: ${err.message}`);
+                $(document).ready(function(){
+                        $("[data-toggle='popover']").popover();    
+                });
+            }
+        });
+    });
+
+    $('.table tbody').on('click', '.rejectbtn', function() {
+
+        $(document).find(".editbtn").show();
+        $(document).find(".delbtn").show();
+
+        var currentTD = $(this).parents('tr').find('td');
+
+            $(currentTD).find('.confirmbtn').hide();
+            $(currentTD).find('.rejectbtn').hide();
+
+    });
+});
+
+});
