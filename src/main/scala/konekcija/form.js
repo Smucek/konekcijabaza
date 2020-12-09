@@ -298,13 +298,17 @@ $(document).ready(function(){
     $.ajax({
         url: url,
         type: "GET",
-        //dataType: "JSON",
+        dataType: "JSON",
         contentType: "application/json",
-        success: function(response, status) {
+        success: function(data, status) {
+
+            var response = data;
             
-            var temperature = response.dataseries.temp2m;
-            $('#thirdParty').append(temperature);
+            var temperature = response.dataseries[0].temp2m;
+            $('#thirdParty').append("Trenutna temperatura u Sarajevu je: " + temperature + " °C");
+            console.log(response);
             console.log(temperature);
+
         }
     })
 })

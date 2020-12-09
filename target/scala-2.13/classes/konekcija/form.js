@@ -97,6 +97,7 @@ $(document).ready(function(){
     $(document).ready(function() {
         $("#addbtn").click(function() {
           $("#addForm").show();
+          $("#delForm").hide();
         });
       });
 
@@ -104,7 +105,20 @@ $(document).ready(function(){
         $("#cancelbtn").click(function() {
           $("#addForm").hide();
           $(".plateduplicate").hide();
+        });
+      });
 
+      $(document).ready(function() {
+        $("#delbtn").click(function() {
+          $("#delForm").show();
+        });
+      });
+
+      $(document).ready(function() {
+        $("#cancelDel").click(function() {
+          $("#delForm").hide();
+          $(document).find(".editbtn").show();
+          $(document).find(".delbtn").show();
         });
       });
 
@@ -114,6 +128,7 @@ $(document).ready(function(){
     
     var url = 'http://localhost:8090/vehicles';
     $("tbody").html("");
+    $("#delForm").hide();
 
     $.ajax({
     url: url,
@@ -222,6 +237,7 @@ $.ajax({
 
 $(document).on("click", ".delbtn", function() {
 
+    $("#delForm").show();
     $(document).find(".editbtn").hide();
     $(document).find(".delbtn").hide();
 
@@ -250,6 +266,7 @@ $(document).on("click", ".delbtn", function() {
                processData: false,
                success: function( data, status ){
                 console.log(data)
+                $("#delForm").hide();
                 $("tbody").html("");
             },
             error: function(err) {
@@ -273,5 +290,23 @@ $(document).on("click", ".delbtn", function() {
 
     });
 });
+
+$(document).ready(function(){
+
+    url = 'http://www.7timer.info/bin/api.pl?lon=18.41&lat=43.859&product=astro&output=json'
+
+    $.ajax({
+        url: url,
+        type: "GET",
+        //dataType: "JSON",
+        contentType: "application/json",
+        success: function(response, status) {
+            
+            var temperature = response.dataseries[0].temp2m;
+            $('#thirdParty').append(temperature);
+            console.log(temperature);
+        }
+    })
+})
 
 });

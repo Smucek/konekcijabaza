@@ -16,7 +16,9 @@
 <body>
 <h1>Vehicles</h1>
 
-
+<div id="thirdParty" class="thirdParty">
+   
+</div>
 
 <div class="search-section">
     <input type="text" id="search" placeholder="Search vehicle..." plate="plate" required>
@@ -28,16 +30,17 @@
     <button type="submit" class="addbtn" id="addbtn">Add new vehicle</button>
 </div>
 
-<form action="/Vehicle" method="put" id="delForm">
+<form action="/Vehicle" method="put" id="delForm" class="delForm">
     <div class="container">
         <div class="del-section">
-            <button type="submit" class="confirmDel" id="ConfirmDel">Confirm</button>
+            <button type="submit" class="confirmDel" id="confirmDel">Confirm</button>
             <button type="reset" class="cancelDel" id="cancelDel">Cancel</button>
+            <div class="confirmDelete"><i>Are you sure you want to delete vehicle?</i></div>
         </div>
         </div>
 </form>
 
-<form action="/Vehicle" method="post" id="addForm">
+<form action="/Vehicle" method="post" id="addForm" class="addForm">
     <div class="container">
 
         <div class="add-section">
