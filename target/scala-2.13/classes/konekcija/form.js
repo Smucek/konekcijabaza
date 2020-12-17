@@ -293,20 +293,36 @@ $(document).on("click", ".delbtn", function() {
 
 $(document).ready(function(){
 
-    url = 'http://www.7timer.info/bin/api.pl?lon=18.41&lat=43.859&product=astro&output=json'
-
     $.ajax({
-        url: url,
+        url: 'https://freegeoip.app/json/',
         type: "GET",
-        //dataType: "JSON",
+        dataType: "JSON",
         contentType: "application/json",
-        success: function(response, status) {
-            
-            var temperature = response.dataseries[0].temp2m;
-            $('#thirdParty').append(temperature);
-            console.log(temperature);
-        }
-    })
-})
+        success: function(geo) {
+            var city = geo.city;
+            var country = geo.region_code;
+            var lat = geo.latitude;
+            var lon = geo.longitude;
+            console.log(lat);
+            console.log(lon);
 
+            $.ajax({
+                url: `http://www.7timer.info/bin/api.pl?lon=${lon}&lat=${lat}&product=astro&output=json`,
+                type: "GET",
+                dataType: "JSON",
+                contentType: "application/json",
+                success: function(data) {
+        
+                    var response = data;
+                    
+                    var temperature = response.dataseries[0].temp2m;
+                   $('#thirdParty').append("Trenutna temperatura u " + city + ", " + country + " je " + temperature + " °C");
+                    console.log(response);
+                    console.log(temperature);
+    
+                }
+            });
+        }
+    }); 
+});
 });

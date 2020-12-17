@@ -19,25 +19,17 @@ object GlavniProgram {
     val url = s"jdbc:postgresql://${host}:${port}/${dbName}?ApplicationName=test"
     val connection = Database.forURL(url, username, password, null, "org.postgresql.Driver")
 
-    val usersRequest = sql"select firstname, surname, registration_date from users".as[(String, String, String)]
+    val usersRequest = sql"select brand from vehicles".as[(String)]
 
     connection.run(usersRequest).onComplete {
-      case Success(r) => println(s"Result: ${r}")
+//      case Success(r) => println(s"Result: ${r}")
+      case Success(r) => println(r.sorted)
+
       case Failure(ex) => {
         println(s"failure: ${ex.getMessage}")
         ex.printStackTrace()
       }
     }
-
-//    val vehicleRequest = sql"select brand, model, plate, registration_date, registration_end_date from vehicles".as[(String, String, String, String, String)]
-//
-//    connection.run(vehicleRequest).onComplete {
-//      case Success(r) => println(s"Result: ${r}")
-//      case Failure(ex) => {
-//        println(s"failure: ${ex.getMessage}")
-//        ex.printStackTrace()
-//      }
-//    }
     Thread.sleep(3000)
   }
 }
