@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import akka.actor.Actor
 import akka.pattern.pipe
 import com.typesafe.config.ConfigFactory
-import konekcija.DatabaseActor.{AddVehicle, DeleteVehicle, EditVehicle, ListVehicles, SearchVehicle}
+import konekcija.DatabaseActor.{AddVehicle, DeleteVehicle, EditVehicle, ListVehicles, MostCommonBrand, SearchVehicle}
 import slick.jdbc.PostgresProfile.api._
 
 object DatabaseActor {
@@ -15,6 +15,7 @@ object DatabaseActor {
                          registration_end_date: LocalDateTime)
   case class AddVehicle(vehicle: Vehicle)
   case class SearchVehicle(searchTerm: Option[String])
+  case class MostCommonBrand()
 }
 
 class  DatabaseActor extends Actor with DatabaseMethods {
@@ -45,8 +46,11 @@ class  DatabaseActor extends Actor with DatabaseMethods {
     case DeleteVehicle (id) => {
       deleteVehicle(id)(connection).pipeTo(sender)
     }
-    case AddVehicle(vehicle: Vehicle) =>
+    case AddVehicle(vehicle: Vehicle) => {
       addVehicle(vehicle)(connection).pipeTo(sender)
-
+    }
+    case MostCommonBrand() => {
+      sender ! mostCommonBrand()(connection)
+    }
   }
 }

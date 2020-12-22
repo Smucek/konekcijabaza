@@ -1,19 +1,22 @@
 package konekcija
 
+import java.io.{File, FileWriter}
 import java.time.LocalDateTime
 
 import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 trait DatabaseMethods {
+
   import scala.concurrent.ExecutionContext.Implicits.global
 
   def listVehicles(plate: Option[String])(connection: Database): Future[Seq[Vehicle]] = {
-//    val vehicleRequest = sql"select * from vehicles".as[Vehicle]
+    //    val vehicleRequest = sql"select * from vehicles".as[Vehicle]
 
     val vehicleRequest = plate match {
-      case Some (vehiclePlate: String) =>
+      case Some(vehiclePlate: String) =>
         sql"select * from vehicles where is_deleted = false AND plate LIKE '%#${vehiclePlate}%';".as[Vehicle]
       case None => sql"select * from vehicles where is_deleted = false".as[Vehicle]
     }
@@ -50,13 +53,13 @@ trait DatabaseMethods {
   def searchVehicle(searchTerm: Option[String])(connection: Database): Future[Seq[Vehicle]] = {
 
     val vehicleSearch = searchTerm match {
-      case Some(term: String)  => sql"select * from vehicles where is_deleted = false AND (lower(brand) LIKE '%#${term.toLowerCase}%' or lower(model) LIKE '%#${term.toLowerCase}%' or lower(plate) LIKE '%#${term.toLowerCase}%');".as[Vehicle]
+      case Some(term: String) => sql"select * from vehicles where is_deleted = false AND (lower(brand) LIKE '%#${term.toLowerCase}%' or lower(model) LIKE '%#${term.toLowerCase}%' or lower(plate) LIKE '%#${term.toLowerCase}%');".as[Vehicle]
       case None => sql"select * from vehicles".as[Vehicle]
     }
     connection.run(vehicleSearch)
   }
 
-  def deleteVehicle (id: Long)(connection: Database): Future[Vehicle] = {
+  def deleteVehicle(id: Long)(connection: Database): Future[Vehicle] = {
 
     val delete =
       sql"""
@@ -85,6 +88,45 @@ trait DatabaseMethods {
 
     connection.run(insert).map { result =>
       result.head
+    }
+  }
+
+  def mostCommonBrand()(connection: Database): Unit = {
+    val brandRequest = sql"select brand from vehicles".as[(String)]
+
+    connection.run(brandRequest).onComplete {
+      case Success(brands) => brands
+
+          println(brands)
+          var brandSorted: Seq[String] = brands.sorted
+          var counter = 0
+          var mostCommonBrand: String = ""
+
+          while (counter < brandSorted.size) {
+            val brandDrop: Seq[String] = brandSorted.dropWhile(_ == brandSorted.head)
+            if ((brandSorted.size - brandDrop.size) > counter) {
+              mostCommonBrand = brandSorted.head
+              counter = brandSorted.size - brandDrop.size
+              brandSorted = brandDrop
+            }
+            else {
+              brandSorted = brandDrop
+            }
+          }
+
+          val file = new File("test.json")
+          val writer = new FileWriter(file, true)
+
+          writer.append(s"""{\n "brand": "${mostCommonBrand}",\n "count": "${counter.toString}"\n}""")
+          writer.close()
+
+          println(mostCommonBrand)
+          println(counter)
+
+      case Failure(ex) => {
+          println(s"failure: ${ex.getMessage}")
+          ex.printStackTrace()
+      }
     }
   }
 }

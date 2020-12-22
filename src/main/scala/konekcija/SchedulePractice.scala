@@ -14,6 +14,7 @@ object SchedulersHowTo {
 }
 
 class SchedulersHowTo(i: Double) extends Actor {
+
   var numbers: Double = i
 
   override def receive: Receive = {
@@ -33,18 +34,16 @@ object ActorUsage {
     implicit val timeout = new Timeout(1.seconds)
 
     val counter = as.actorOf(Props(new SchedulersHowTo(0)))
-    as.scheduler.scheduleAtFixedRate(1.second, 2.second) (new Runnable {
-      override def run(): Unit = {
+    as.scheduler.schedule(1.second, 2.second) {
 
-        val i = new scala.util.Random
-        val r = i.nextInt
+      val i = new scala.util.Random
+      val r = i.nextInt
 
-        val result: Future[Any] = counter ? RandomNumber(r)
-        result.onComplete {
-          case Success(r) => println(r)
-          case Failure(ex) => println(s"Didn't finish...: ${ex.getMessage}")
-        }
+      val result: Future[Any] = counter ? RandomNumber(r)
+      result.onComplete {
+        case Success(r) => println(r)
+        case Failure(ex) => println(s"Didn't finish...: ${ex.getMessage}")
       }
-    })
+    }
   }
 }

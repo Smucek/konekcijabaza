@@ -316,10 +316,28 @@ $(document).ready(function(){
                     var response = data;
                     
                     var temperature = response.dataseries[0].temp2m;
-                   $('#thirdParty').append("Trenutna temperatura u " + city + ", " + country + " je " + temperature + " °C");
+                    
+                    var i = 0;
+                    var text = "Trenutna temperatura u " + city + ", " + country + " je " + temperature + " °C";
+                    var speed = 50;
+                    
+                     // if (i < text.lenght) {
+                        function typeWriter() {
+                            if (i < text.length) {
+                        document.getElementById("thirdParty").innerHTML += text.charAt(i); 
+                        i++;
+                        setTimeout(typeWriter, speed);
+                        }
+                    }
+                        typeWriter();
+                  // document.getElementById("thirdParty").innerHTML += text.charAt(i);
+                  // i++;
+                  //  setTimeout(speed);
+                  // }
+                
                     console.log(response);
                     console.log(temperature);
-    
+                
                 }
             });
         }
