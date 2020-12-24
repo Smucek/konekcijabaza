@@ -4,6 +4,7 @@ import java.io.{File, FileWriter}
 import java.time.LocalDateTime
 
 import slick.jdbc.PostgresProfile.api._
+import spray.json.{JsObject, JsString}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -91,41 +92,74 @@ trait DatabaseMethods {
     }
   }
 
+  //most common brand as a function in program
+//  def mostCommonBrand()(connection: Database): Unit = {
+//    val brandRequest = sql"select brand from vehicles".as[(String)]
+//
+//    connection.run(brandRequest).onComplete {
+//      case Success(brands) => brands
+//
+//          println(brands)
+//          var brandSorted: Seq[String] = brands.sorted
+//          var counter = 0
+//          var mostCommonBrand: String = ""
+//
+//          while (counter < brandSorted.size) {
+//            val brandDrop: Seq[String] = brandSorted.dropWhile(_ == brandSorted.head)
+//            if ((brandSorted.size - brandDrop.size) > counter) {
+//              mostCommonBrand = brandSorted.head
+//              counter = brandSorted.size - brandDrop.size
+//              brandSorted = brandDrop
+//            }
+//            else {
+//              brandSorted = brandDrop
+//            }
+//          }
+//
+//          val file = new File("test.json")
+//          val writer = new FileWriter(file, false)
+//
+//          writer.append(s"""{\n "brand": "${mostCommonBrand}",\n "count": "${counter.toString}"\n}""")
+//          writer.close()
+//
+//          println(mostCommonBrand)
+//          println(counter)
+//
+//      case Failure(ex) => {
+//          println(s"failure: ${ex.getMessage}")
+//          ex.printStackTrace()
+//      }
+//    }
+//  }
+
   def mostCommonBrand()(connection: Database): Unit = {
-    val brandRequest = sql"select brand from vehicles".as[(String)]
+    val brandRequest = sql"select brand, count(brand) as counter from vehicles where is_deleted = false group by brand order by counter desc limit 5".as[(String)]
 
     connection.run(brandRequest).onComplete {
       case Success(brands) => brands
 
-          println(brands)
-          var brandSorted: Seq[String] = brands.sorted
-          var counter = 0
-          var mostCommonBrand: String = ""
+        println(brands)
 
-          while (counter < brandSorted.size) {
-            val brandDrop: Seq[String] = brandSorted.dropWhile(_ == brandSorted.head)
-            if ((brandSorted.size - brandDrop.size) > counter) {
-              mostCommonBrand = brandSorted.head
-              counter = brandSorted.size - brandDrop.size
-              brandSorted = brandDrop
-            }
-            else {
-              brandSorted = brandDrop
-            }
-          }
+        brands.foreach(mostCommonBrand => {
 
           val file = new File("test.json")
           val writer = new FileWriter(file, false)
 
-          writer.append(s"""{\n "brand": "${mostCommonBrand}",\n "count": "${counter.toString}"\n}""")
+          val brand = JsObject(
+            "first" -> JsString(brands(0)),
+            "second" -> JsString(brands(1)),
+            "third" -> JsString(brands(2)),
+            "fourth" -> JsString(brands(3)),
+            "fifth" -> JsString(brands(4))
+          )
+          writer.append(brand.toString)
           writer.close()
-
           println(mostCommonBrand)
-          println(counter)
-
+        }
+        )
       case Failure(ex) => {
-          println(s"failure: ${ex.getMessage}")
-          ex.printStackTrace()
+        println(s"failure: ${ex.getMessage}")
+        ex.printStackTrace()
       }
     }
   }

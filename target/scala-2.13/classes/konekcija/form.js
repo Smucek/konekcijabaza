@@ -356,9 +356,8 @@ $(document).ready(function(){
                success: function(res) {
                    console.log(res);
         
-                  
-                   document.getElementById("mostCommonBrand").innerHTML += res; 
-                   
+                    text = "Najcesci brand vozila u bazi je " + res[0] + " sa ukupno " + res[1] + " vozila"
+                   document.getElementById("mostCommonBrand").innerHTML += text; 
                },
                error: function(err) {
                    console.log(`Error on executing request: ${err.message}`);
