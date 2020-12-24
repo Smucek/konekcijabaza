@@ -115,7 +115,7 @@ trait DatabaseMethods {
           }
 
           val file = new File("test.json")
-          val writer = new FileWriter(file, true)
+          val writer = new FileWriter(file, false)
 
           writer.append(s"""{\n "brand": "${mostCommonBrand}",\n "count": "${counter.toString}"\n}""")
           writer.close()

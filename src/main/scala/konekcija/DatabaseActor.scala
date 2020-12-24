@@ -4,9 +4,12 @@ import java.time.LocalDateTime
 
 import akka.actor.Actor
 import akka.pattern.pipe
+import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
-import konekcija.DatabaseActor.{AddVehicle, DeleteVehicle, EditVehicle, ListVehicles, MostCommonBrand, SearchVehicle}
+import konekcija.DatabaseActor._
 import slick.jdbc.PostgresProfile.api._
+
+import scala.concurrent.duration._
 
 object DatabaseActor {
   case class ListVehicles(plate: Option[String])
@@ -15,7 +18,6 @@ object DatabaseActor {
                          registration_end_date: LocalDateTime)
   case class AddVehicle(vehicle: Vehicle)
   case class SearchVehicle(searchTerm: Option[String])
-  case class MostCommonBrand()
 }
 
 class  DatabaseActor extends Actor with DatabaseMethods {
@@ -31,6 +33,11 @@ class  DatabaseActor extends Actor with DatabaseMethods {
   val url = s"jdbc:postgresql://${host}:${port}/${dbName}?ApplicationName=test"
   val connection = Database.forURL(url, username, password, null, "org.postgresql.Driver")
 
+  context.system.scheduler.schedule(1.second, 2.hours) {
+    implicit val timeout = new Timeout(1.seconds)
+
+  mostCommonBrand()(connection: Database)
+  }
 
   def receive = {
 
@@ -48,9 +55,6 @@ class  DatabaseActor extends Actor with DatabaseMethods {
     }
     case AddVehicle(vehicle: Vehicle) => {
       addVehicle(vehicle)(connection).pipeTo(sender)
-    }
-    case MostCommonBrand() => {
-      sender ! mostCommonBrand()(connection)
     }
   }
 }

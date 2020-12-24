@@ -8,7 +8,7 @@ import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusC
 import akka.http.scaladsl.server.Directives
 import akka.pattern.ask
 import akka.util.Timeout
-import konekcija.DatabaseActor.{AddVehicle, DeleteVehicle, EditVehicle, ListVehicles, MostCommonBrand, SearchVehicle}
+import konekcija.DatabaseActor.{AddVehicle, DeleteVehicle, EditVehicle, ListVehicles, SearchVehicle}
 import spray.json.{JsObject, JsString}
 
 import scala.concurrent.duration._
@@ -21,7 +21,6 @@ object FirstApi extends App with Directives with JsonSupport {
   val dbActor = as.actorOf(Props(new DatabaseActor))
   implicit val timeout = Timeout(3.seconds)
 
-  dbActor ? MostCommonBrand
 
   val getUser = get {
     path("user" / Segment) {id =>
