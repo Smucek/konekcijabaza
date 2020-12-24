@@ -343,4 +343,28 @@ $(document).ready(function(){
         }
     }); 
 });
+
+$(document).ready(function(){
+
+    $.ajax({
+        url: 'http://localhost:8090/mostCommonBrand',
+               type: "GET",
+               processData: false,
+               contentType: "application/json",
+               data: {},
+               headers: {},
+               success: function(res) {
+                   console.log(res);
+        
+                  
+                   document.getElementById("mostCommonBrand").innerHTML += res; 
+                   
+               },
+               error: function(err) {
+                   console.log(`Error on executing request: ${err.message}`);
+               }
+        });
+
+});
+
 });

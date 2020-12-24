@@ -119,14 +119,14 @@ object FirstApi extends App with Directives with JsonSupport {
     }
   }
 
-  val forma = get {
-    path("forma") {
-      getFromFile("VehiclePage.html")
+  val brands = get {
+    path("mostCommonBrand") {
+      getFromFile("test.json")
     }
   }
 
 
-  val routes = getUser ~ getVehicles ~ addVehicle ~ searchVehicle ~ deleteVehicle ~ forma ~ editVehicle
+  val routes = getUser ~ getVehicles ~ addVehicle ~ searchVehicle ~ deleteVehicle ~ brands ~ editVehicle
 
   val httpCtx = Http()
   httpCtx.bindAndHandle(routes,"localhost", 8090)
