@@ -140,8 +140,6 @@ trait DatabaseMethods {
 
         println(brands)
 
-        brands.foreach(mostCommonBrand => {
-
           val file = new File("test.json")
           val writer = new FileWriter(file, false)
 
@@ -154,9 +152,7 @@ trait DatabaseMethods {
           )
           writer.append(brand.toString)
           writer.close()
-          println(mostCommonBrand)
-        }
-        )
+
       case Failure(ex) => {
         println(s"failure: ${ex.getMessage}")
         ex.printStackTrace()

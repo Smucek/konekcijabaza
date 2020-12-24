@@ -356,7 +356,7 @@ $(document).ready(function(){
                success: function(res) {
                    console.log(res);
         
-                    text = "Najcesci brand vozila u bazi je " + res[0] + " sa ukupno " + res[1] + " vozila"
+                    text = `Najzastupljeniji brandovi vozila u bazi su ${res.first}, ${res.second}, ${res.third}, ${res.fourth}, ${res.fifth}`
                    document.getElementById("mostCommonBrand").innerHTML += text; 
                },
                error: function(err) {
