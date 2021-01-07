@@ -13,6 +13,24 @@ trait DatabaseMethods {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
+  def getUser(username: Option[String], pass: Option[String])(connection: Database): Future[User] = {
+
+//        val userRequest = username match {
+//          case Some(userFound: String) =>
+//            sql"select * from users where username = '#${userFound}' and pass = '#${pass.get}';".as[User]
+//            case _ => null
+//        }
+//        connection.run(userRequest)
+
+    val userRequest = sql"select * from users where username = '#${username.get}' and pass = '#${pass.get}';".as[User]
+    connection.run(userRequest.headOption).flatMap { result =>
+      result match {
+        case Some(user) => Future.successful(user)
+        case _ => Future.failed(new Throwable("User not found!"))
+      }
+    }
+  }
+
   def listVehicles(plate: Option[String])(connection: Database): Future[Seq[Vehicle]] = {
     //    val vehicleRequest = sql"select * from vehicles".as[Vehicle]
 

@@ -1,20 +1,23 @@
 package konekcija
 
 import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives
 import akka.pattern.ask
 import akka.util.Timeout
-import konekcija.DatabaseActor.{AddVehicle, DeleteVehicle, EditVehicle, ListVehicles, SearchVehicle}
+import konekcija.DatabaseActor._
+import pdi.jwt.{JwtAlgorithm, JwtClaim, JwtSprayJson}
 import spray.json.{JsObject, JsString}
 
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
-object FirstApi extends App with Directives with JsonSupport {
+object FirstApi extends App with Directives with JsonSupport with JsonSuppUser {
   import scala.concurrent.ExecutionContext.Implicits.global
 
   implicit val as = ActorSystem()
@@ -22,10 +25,34 @@ object FirstApi extends App with Directives with JsonSupport {
   implicit val timeout = Timeout(3.seconds)
 
 
+  val algorithm = JwtAlgorithm.HS256
+  val secretKey = "imamjosmnogouciti"
+
+def createToken(username: Option[String], expiration: Int): String = {
+  val claims = JwtClaim(
+    expiration = Some(System.currentTimeMillis()/1000 + TimeUnit.DAYS.toSeconds(expiration)),
+    issuedAt = Some(System.currentTimeMillis()/1000),
+    issuer = Some("ajdin"),
+    content = "scalarules"
+  )
+  JwtSprayJson.encode(claims, secretKey, algorithm)
+}
+
   val getUser = get {
-    path("user" / Segment) {id =>
-      complete {
-        "Searched user " + id
+    path("getUser") {
+
+      parameters("username".?, "pass".?) { (username, pass) =>
+
+        val userConfirmed = (dbActor ? GetUser(username, pass)).map(_.asInstanceOf[Seq[User]])
+        onComplete(userConfirmed) { case user =>
+
+            val token = createToken(username, 1)
+            respondWithHeader(RawHeader("Access-Granted", token)){
+              complete(StatusCodes.OK)
+
+          }
+          case _ => complete(StatusCodes.Forbidden)
+        }
       }
     }
   }

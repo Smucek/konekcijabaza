@@ -24,3 +24,5 @@ libraryDependencies ++= Seq(
 libraryDependencies += "org.postgresql" % "postgresql" % "42.2.5"
 
 libraryDependencies += "com.typesafe" % "config" % "1.2.1"
+
+libraryDependencies += "com.pauldijou" %% "jwt-spray-json" % "4.2.0"

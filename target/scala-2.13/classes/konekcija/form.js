@@ -130,6 +130,7 @@ $(document).ready(function(){
     $("tbody").html("");
     $("#delForm").hide();
 
+
     $.ajax({
     url: url,
            type: "GET",
