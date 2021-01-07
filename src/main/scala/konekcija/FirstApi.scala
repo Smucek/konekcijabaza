@@ -44,12 +44,12 @@ def createToken(username: Option[String], expiration: Int): String = {
       parameters("username".?, "pass".?) { (username, pass) =>
 
         val userConfirmed = (dbActor ? GetUser(username, pass)).map(_.asInstanceOf[Seq[User]])
-        onComplete(userConfirmed) { case user =>
-
+        onComplete(userConfirmed) match {
+          case user => {
             val token = createToken(username, 1)
-            respondWithHeader(RawHeader("Access-Granted", token)){
+            respondWithHeader(RawHeader("Access-Granted", token)) {
               complete(StatusCodes.OK)
-
+            }
           }
           case _ => complete(StatusCodes.Forbidden)
         }
