@@ -17,7 +17,7 @@ import spray.json.{JsObject, JsString}
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
-object FirstApi extends App with Directives with JsonSupport with JsonSuppUser {
+object VehiclesApi extends App with Directives with JsonSupport with JsonSuppUser {
   import scala.concurrent.ExecutionContext.Implicits.global
 
   implicit val as = ActorSystem()
@@ -28,7 +28,7 @@ object FirstApi extends App with Directives with JsonSupport with JsonSuppUser {
   val algorithm = JwtAlgorithm.HS256
   val secretKey = "imamjosmnogouciti"
 
-def createToken(username: Option[String], expiration: Int): String = {
+def createToken(username: String, expiration: Int): String = {
   val claims = JwtClaim(
     expiration = Some(System.currentTimeMillis()/1000 + TimeUnit.DAYS.toSeconds(expiration)),
     issuedAt = Some(System.currentTimeMillis()/1000),
@@ -38,20 +38,23 @@ def createToken(username: Option[String], expiration: Int): String = {
   JwtSprayJson.encode(claims, secretKey, algorithm)
 }
 
-  val getUser = get {
+  val login = get {
     path("getUser") {
+      parameters("username".as[String], "pass".as[String]) { (username, pass) =>
 
-      parameters("username".?, "pass".?) { (username, pass) =>
+        val passDecoded = new String(java.util.Base64.getDecoder.decode(pass))
+        val passSplited: Seq[String] = passDecoded.split(":")
+        val passFinal = passSplited(1)
 
-        val userConfirmed = (dbActor ? GetUser(username, pass)).map(_.asInstanceOf[Seq[User]])
-        onComplete(userConfirmed) match {
-          case user => {
+        val userConfirmed = (dbActor ? GetUser(username, passFinal))
+        onComplete(userConfirmed) {
+          case Success(user) => {
             val token = createToken(username, 1)
             respondWithHeader(RawHeader("Access-Granted", token)) {
               complete(StatusCodes.OK)
-            }
+            } 
           }
-          case _ => complete(StatusCodes.Forbidden)
+          case Failure(ex) => complete(StatusCodes.Unauthorized)
         }
       }
     }
@@ -64,7 +67,6 @@ def createToken(username: Option[String], expiration: Int): String = {
 
       val vehiclesShow = (dbActor ? ListVehicles(plate)).map(_.asInstanceOf[Seq[Vehicle]])
       onComplete(vehiclesShow) { vehicles =>
-//        respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")) {
           complete {
             vehicles
           }
@@ -79,7 +81,6 @@ def createToken(username: Option[String], expiration: Int): String = {
 
         val vehiclesShow = (dbActor ? SearchVehicle(searchTerm)).map(_.asInstanceOf[Seq[Vehicle]])
         onComplete(vehiclesShow) { vehicles =>
-          //        respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")) {
           complete {
             vehicles
           }
@@ -120,18 +121,12 @@ def createToken(username: Option[String], expiration: Int): String = {
              case Failure(ex) => complete {
                               HttpResponse(StatusCodes.BadRequest, entity = HttpEntity(ContentTypes.`text/plain(UTF-8)`, ex.getMessage))
               }
+            }
           }
-        }
-//          case (_, _, _, _, _, _,) => complete {
-//            HttpResponse(StatusCodes.BadRequest, entity = HttpEntity(ContentTypes.`text/plain(UTF-8)`, "Wrong inputs."))
-//          }
         }
       }
     }
   }
-
-
-
 
   val deleteVehicle = delete {
     path("vehicleDel" / LongNumber) { id =>
@@ -153,7 +148,7 @@ def createToken(username: Option[String], expiration: Int): String = {
   }
 
 
-  val routes = getUser ~ getVehicles ~ addVehicle ~ searchVehicle ~ deleteVehicle ~ brands ~ editVehicle
+  val routes = login ~ getVehicles ~ addVehicle ~ searchVehicle ~ deleteVehicle ~ brands ~ editVehicle
 
   val httpCtx = Http()
   httpCtx.bindAndHandle(routes,"localhost", 8090)

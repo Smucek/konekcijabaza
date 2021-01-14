@@ -18,7 +18,7 @@ object DatabaseActor {
                          registration_end_date: LocalDateTime)
   case class AddVehicle(vehicle: Vehicle)
   case class SearchVehicle(searchTerm: Option[String])
-  case class GetUser(username: Option[String], pass: Option[String])
+  case class GetUser(username: String, pass: String)
 }
 
 class  DatabaseActor extends Actor with DatabaseMethods {

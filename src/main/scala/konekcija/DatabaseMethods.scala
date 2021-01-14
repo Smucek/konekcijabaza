@@ -13,7 +13,7 @@ trait DatabaseMethods {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  def getUser(username: Option[String], pass: Option[String])(connection: Database): Future[User] = {
+  def getUser(username: String, pass: String)(connection: Database): Future[User] = {
 
 //        val userRequest = username match {
 //          case Some(userFound: String) =>
@@ -22,11 +22,11 @@ trait DatabaseMethods {
 //        }
 //        connection.run(userRequest)
 
-    val userRequest = sql"select * from users where username = '#${username.get}' and pass = '#${pass.get}';".as[User]
+    val userRequest = sql"select * from users where username = '#${username}' and pass = '#${pass}';".as[User]
     connection.run(userRequest.headOption).flatMap { result =>
       result match {
         case Some(user) => Future.successful(user)
-        case _ => Future.failed(new Throwable("User not found!"))
+        case _ => Future.failed(new Throwable("User not found"))
       }
     }
   }
