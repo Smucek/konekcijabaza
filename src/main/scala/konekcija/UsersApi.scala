@@ -3,7 +3,6 @@ package konekcija
 import java.util.concurrent.TimeUnit
 
 import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.server.Directives
@@ -15,8 +14,7 @@ import pdi.jwt.{JwtAlgorithm, JwtClaim, JwtSprayJson}
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
-object UsersApi extends App with Directives with JsonSuppUser {
-  import scala.concurrent.ExecutionContext.Implicits.global
+object UsersApi extends Directives with JsonSuppUser {
 
   implicit val as = ActorSystem()
   val dbActor = as.actorOf(Props(new DatabaseActor))
@@ -58,9 +56,9 @@ object UsersApi extends App with Directives with JsonSuppUser {
     }
   }
 
-  val routes = login
+//  val routes = login
 
-  val httpCtx = Http()
-  httpCtx.bindAndHandle(routes,"localhost", 8090)
+//  val httpCtx = Http()
+//  httpCtx.bindAndHandle(routes,"localhost", 8090)
 
 }
