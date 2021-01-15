@@ -2,7 +2,7 @@ package konekcija
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.server.Directives
@@ -17,7 +17,7 @@ import scala.util.{Failure, Success}
 object UsersApi extends Directives with JsonSuppUser {
 
   implicit val as = ActorSystem()
-  val dbActor = as.actorOf(Props(new DatabaseActor))
+  val dbActor = VehiclesApi.dbActor
   implicit val timeout = Timeout(3.seconds)
 
 
