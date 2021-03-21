@@ -1,9 +1,15 @@
-div.input-section {
+.input-section {
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
+    display: inline;
+}
+h2 {
+    margin: 0px;
+}
 
-    background-color: red;
+#username {
+   
 }
 
 .addForm {

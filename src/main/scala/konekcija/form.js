@@ -67,9 +67,9 @@ $(document).ready(function(){
                 },
                 error: function(err) {
                     console.log(`Error on executing request: ${err.message}`);
-                    $(document).ready(function(){
-                            $("[data-toggle='popover']").popover();    
-                    });
+                    // $(document).ready(function(){
+                    //         $("[data-toggle='popover']").popover();    
+                    // });
                 }
             });
         });
@@ -129,6 +129,7 @@ $(document).ready(function(){
     var url = 'http://localhost:8090/vehicles';
     $("tbody").html("");
     $("#delForm").hide();
+    $("#search").val('');
 
 
     $.ajax({
@@ -201,6 +202,7 @@ url: url,
 $(document).on("click", ".addnewbtn", function(event){
     event.preventDefault();
 
+
     var vehicleData = {
        "brand" : document.getElementById("brand").value,
        "model" : document.getElementById("model").value,
@@ -209,6 +211,8 @@ $(document).on("click", ".addnewbtn", function(event){
        "registration_date" : document.getElementById("registration_date").value,
        "registration_end_date" : document.getElementById("registration_end_date").value
     };
+
+    console.log(vehicleData);
 
    var url = `http://localhost:8090/vehicleAdd`;
 $.ajax({
@@ -229,7 +233,7 @@ $.ajax({
     error: function(err) {
         console.log(`Error on executing request: ${err.message}`);
         $(".plateduplicate").show();
-
+    
     }
 });
 });
@@ -248,6 +252,7 @@ $(document).on("click", ".delbtn", function() {
       //  $(currentTD).find('.rejectbtn').show();
 
  $(document).on('click', '.confirmDel', function() {
+    $("#search").val('');
     event.preventDefault();
 
      var delVehicle = {
@@ -262,7 +267,7 @@ $(document).on("click", ".delbtn", function() {
                type: "DELETE",
                dataType: "JSON",
                contentType: "application/json",
-               data: JSON.stringify(idToDelete),
+            //    data: JSON.stringify(idToDelete),
                headers: {},
                processData: false,
                success: function( data, status ){
@@ -271,10 +276,11 @@ $(document).on("click", ".delbtn", function() {
                 $("tbody").html("");
             },
             error: function(err) {
+                console.log('err', err);
                 console.log(`Error on executing request: ${err.message}`);
-                $(document).ready(function(){
-                        $("[data-toggle='popover']").popover();    
-                });
+                // $(document).ready(function(){
+                //         $("[data-toggle='popover']").popover();    
+                // });
             }
         });
     });

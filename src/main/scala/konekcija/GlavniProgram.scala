@@ -44,7 +44,7 @@ object GlavniProgram {
           }
         }
 
-        val file = new File("test.json")
+        val file = new File("writebrands.json")
         val writer = new FileWriter(file, false)
 
         writer.append(s"""{\n "brand": "${mostCommonBrand}",\n "count": "${counter.toString}"\n}""")
